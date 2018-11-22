@@ -11,7 +11,9 @@ class HBAction{
 	public $name;
 	//input of request
 	public $input;
-	public $table;
+	public $model;
+	//duong dan den file cua thu muc dang lam viec
+	public $path;
 	
 	public function __construct(){
 		$this->taskMap = array();
@@ -27,7 +29,7 @@ class HBAction{
 			$this->taskMap[strtolower($mName)] = $mName;
 		}
 		$this->input = HBFactory::getInput();
-		$this->table = $this->get_table();
+// 		$this->model = $this->get_model('#__'.$this->getName(),'id');
 	}
 	
 	/**
@@ -63,6 +65,95 @@ class HBAction{
 		include $template;
 	}
 	
+	function save_and_close(){
+		return $this->save();
+	}
+	public function getInputData(){
+		$post = $this->input->getPost();
+		$data = $post['data'];
+		$this->load_model();
+		// 		die('34');
+		
+		
+		$primary_key = $this->model->get_primary_key();
+		foreach($primary_key as $key){
+			if($this->input->get($key)){
+				$data[$key] = $this->input->get($key);
+			}
+		}
+		return $data;
+	}
+	
+	public function save(){
+		//check captcha
+// 		global
+		global $wpdb;
+		$post = $this->input->getPost();
+		$this->load_model();
+		$primary_key = $this->model->get_primary_key();
+		$data = $this->getInputData();
+// 		debug($data);die;
+		$result = $this->model->save($data);
+// 		debug($this->model);die;
+// 		debug($result);die;
+		$first_key = reset($primary_key);
+		
+	
+		if($result){
+			hb_enqueue_message(_('Save item success'));
+			$_SESSION[$this->name]['data'] = false;
+		}
+		else{
+			//neu that bai luu du lieu nay lai de user khong phai nhap lai du lieu nay
+			$_SESSION[$this->name]['data'] = (object)$data;
+			//debug($wpdb);die;
+			hb_enqueue_message($wpdb->last_error,'error');
+		}
+		$url_key = [];
+		foreach($primary_key as $key){
+			$url_key[] = "{$key}={$this->model->$key}"; 
+		}
+		if($this->get_task()=='save_and_close'){
+			wp_safe_redirect(admin_url('admin.php?page='.$this->getName()));
+		}else{
+			wp_safe_redirect(admin_url('admin.php?page='.$this->getName().'&layout=edit&'.implode('&', $url_key)));
+		}
+		
+		return;
+	}
+	
+	private function get_task(){
+		return $this->input->get('task');
+	}
+	
+
+
+	function delete(){
+		$this->model = $this->get_model();
+		$primary_key = $this->model->get_primary_key();
+// 		debug($primary_key);
+		foreach($primary_key as $key){
+			if($this->input->get($key)){
+				$data[$key] = $this->input->get($key);
+			}
+		}
+// 		debug($data);die;
+		if(!$data){
+			hb_enqueue_message(_('Please select item'));
+			wp_redirect(admin_url('admin.php?page='.$this->getName()));
+			return false;
+		}
+		$this->model->load($data);
+		if(!$this->model->delete()){
+			hb_enqueue_message(__('Delete failed '.$this->model->getError() ),'error');			
+		}else{
+			hb_enqueue_message(__('Delete Success' ));
+		}
+		wp_redirect(admin_url('admin.php?page='.$this->getName()));
+		return;
+	
+	}
+	
 /**
 	 * Method to get the controller name
 	 *
@@ -84,6 +175,7 @@ class HBAction{
 			{
 				throw new Exception(sprintf(__('Invalid action name')), 500);
 			}
+			
 			$this->name = strtolower($r[1]);
 		}
 
@@ -151,14 +243,49 @@ class HBAction{
 
 		return self::$views[$name][$type][$prefix];
 	}
+	//get path of folder
+	private function get_path(){
+		$this->_path = HB_PATH . 'includes/admin/' .$this->name .'/';
+		return $this->_path;
+	}
 	
-	public function get_table($table_name = '',$primary_key = array('id')){
-		$this->table = new HbTable($table_name, $primary_key);
-		return $this->table;
+	private function load_file($file){
+		$this->path = $this->get_path();
+		return require_once $this->path.$file.'.php';
+	}
+	
+	function load_model(){
+		if(!$this->model){
+			$this->model = $this->get_model();
+		}
+	}
+	
+	public function get_model(){
+		$this->load_file('model');
+		$model = "HBModel".$this->getName();
+		$this->model = new $model();
+		return $this->model;
 	}
 	
 	public function ajax_process_order($result){
+		
 		echo json_encode($result);
+		exit;
+	}
+	
+	public function renderJson($data){
+		// Use the correct json mime-type
+	    header('Content-Type: application/json');	
+	    // Change the suggested filename
+	    header('Content-Disposition: attachment;filename="response.json"');
+	    header('Access-Control-Allow-Origin: *');
+		echo json_encode($data);
+		exit;
+	}
+	
+	public function renderError($msg){
+		header("HTTP/1.0 404 Not Found");
+		echo $msg;
 		exit;
 	}
 	

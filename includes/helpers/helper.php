@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @package 	Bookpro
+ * @package 	FVN-extension
  * @author 		Vuong Anh Duong
  * @link 		http://http://woafun.com/
  * @copyright 	Copyright (C) 2011 - 2012 Vuong Anh Duong
@@ -61,10 +61,9 @@ class HBHelper
 	}
     
 	
-	static function renderLayout($name,$displayData,$path='layouts'){
+	static function renderLayout($name,$displayData=null,$path='layouts'){
 		$file = $path.DS.$name.'.php';
-		$find[] = HB_Template_Loader::getRoot().$file;
-		$template       = locate_template( array_unique( $find ) );
+		$template = HB_Template_Loader::getRoot($file);
 		if(!$template){
 			$template = HB_PATH ."templates/$file";
 		}
@@ -155,13 +154,18 @@ class HBHelper
 		return $string;
 	}
 
-	function sendMail($to, $subject, $body , $headers = null, $attachments = null)
+	static function sendMail($to, $subject, $body , $headers = null, $attachments = null,$from_name=null,$from_email=null,$cc=null)
 	{
 		if(!$header){
 			$headers = array('Content-Type: text/html; charset=UTF-8');
 			//$headers[] = 'From: Me Myself <me@example.net>';
 			//$headers[] = 'Cc: John Q Codex <jqc@wordpress.org>';
 			//$headers[] = 'Cc: iluvwp@wordpress.org'; // note you can just use a simple email address
+		}else{
+			$headers[] = 'Content-Type: text/html; charset=UTF-8';			
+		}
+		if($from_name){
+			$headers[] = "From: {$from_name} <{$from_email}>";
 		}
 		
 		return wp_mail( $to, $subject, $body, $headers, $attachments );
@@ -248,6 +252,7 @@ class HBHelper
 	}
 	
 	public static function translate_eng($str){
+		$str = (string)$str;
 		$str = preg_replace("/(à|á|ạ|ả|ã|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ)/", "a", $str);
 		$str = preg_replace("/(è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ)/", "e", $str);
 		$str = preg_replace("/(ì|í|ị|ỉ|ĩ)/", "i", $str);
@@ -283,6 +288,33 @@ class HBHelper
 	static function get_order_link($order){
 		return site_url().'/?view=orderdetail&order_number='.$order->order_number.'&email='.$order->email;
 	}
+
+	static function get_payment_method($status){
+		$text = null;
+
+		switch ($status){
+			case 'cash':
+                $text = "Tiền mặt";
+                break;
+			case 'onepay':
+				$text = "Onepay";
+				break;
+        }
+        return $text;
+	}
+	
+	static function get_url_path(){
+		$path_info = substr($_SERVER['PHP_SELF'], 0, -9);
+		$url = substr($_SERVER ['REQUEST_URI'],strlen($path_info));
+		$url = explode('/', $url);
+		return $url;
+	}
+	
+	static function clean_string($string) {
+		$string = self::translate_eng($string);
+		$string = str_replace(' ', '-', $string); // Replaces all spaces with hyphens.
+		return preg_replace('/[^A-Za-z0-9\-]/', '-', $string); // Removes special chars.
+}
 
 }
 

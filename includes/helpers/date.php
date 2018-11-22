@@ -1,6 +1,6 @@
 <?php
 /**
- * @package 	Bookpro
+ * @package 	FVN-extension
  * @author 		Vuong Anh Duong
  * @link 		http://http://woafun.com/
  * @copyright 	Copyright (C) 2011 - 2012 Vuong Anh Duong
@@ -152,8 +152,8 @@ class HBDateHelper {
 				// Year
 	        'L' => '',
 	        'o' => '',
-	        'Y' => 'yyyy',
-	        'y' => 'yy',
+	        'Y' => 'yy',
+	        'y' => 'y',
 				// Time
 	        'a' => '',
 	        'A' => '',
@@ -240,6 +240,22 @@ class HBDateHelper {
 		}
 		else
 			return $string_hours;
+	}
+	
+	static function getDate($date_str,$time_zone=''){
+		$date = new DateTime($date_str);
+		return $date;
+	}
+	
+	static function display($date,$format=''){
+		
+		if(substr($date, 0,4)=='0000'){
+			return '';
+		}
+		if(!$format){
+			$format = self::getConvertDateFormat();
+		}
+		return self::getDate($date)->format($format);
 	}
 	
 }

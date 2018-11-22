@@ -11,10 +11,10 @@ License: GPLv2
 */
 defined('ABSPATH') or die('Restricted access');
 
-class JBPayment_Cash
+class HbPayment_Cash
 {
 
-	public $_element = 'jbpayment_cash';
+	public $_element = 'hbpayment_cash';
 	public $params;
 	public $returnUrl;
 	public $cancelUrl;
@@ -25,7 +25,7 @@ class JBPayment_Cash
 	 */
 	public $order;
 
-	function __construct($main_config) {
+	function __construct($main_config=array()) {
 		$this->config = $main_config;
 		$config = get_option($this->_element);
 		$this->params = json_decode($config);
@@ -58,19 +58,27 @@ class JBPayment_Cash
 	}
 	
 	
-	function _prePayment( $data )
+	function _prePayment( )
 	{
-		wp_redirect($this->returnUrl);
-		return;
+		$this->order->pay_method = 'cash';
+		$this->order->order_status = 'CONFIRMED';
+		$result = array();
+		if($this->order->store()){			
+			$result['status']=1;
+			$result['url'] = site_url('index.php?hbaction=payment&task=confirm&order_id='.$this->order->id.'&method=cash&token='.$this->order->order_number);
+			hb_enqueue_message(__('Booking success'));
+		}else{
+			$result['status']=0;
+			$result['code']='404';
+			$result['msg']=__('Save failed');
+		}
+		
+		return $result;
 
 	}
 	
 	
 	public function _displayMessage(){		
-		$this->order->load($this->getInput('order_id'));
-		$this->order->pay_status = $this->getParam('pay_status','SUCCESS');
-		$this->order->order_status = $this->getParam('order_status','CONFIRMED');
-		$this->order->store();
 		
 		return $this->order;
 	}
@@ -83,9 +91,9 @@ class JBPayment_Cash
 	 * @param $data     array       form post data
 	 * @return string   HTML to display
 	 */
-	function _postPayment( $data )
+	function _postPayment( $data = array() )
 	{
-		return $this->_displayMessage();
+		return $this->order;
 	}
 
 	/**
@@ -99,9 +107,9 @@ class JBPayment_Cash
 		return $html;
 	}
 	//render layout 
-	private function _getLayout($layout,$data=null){
+	public function _getLayout($layout,$data=null){
 		ob_start();
-		include __DIR__.'/'.$this->_element.'/tmpl/'.$layout.'.php';		
+		include __DIR__.'/tmpl/'.$layout.'.php';		
 		$html = ob_get_contents();
 		ob_end_clean();
 		return $html;

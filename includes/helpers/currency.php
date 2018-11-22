@@ -2,7 +2,7 @@
 
 defined( 'ABSPATH' ) or die( 'Direct Access to this location is not allowed.' );
 /**
- * @package 	Bookpro
+ * @package 	FVN-extension
  * @author 		Vuong Anh Duong
  * @link 		http://http://woafun.com/
  * @copyright 	Copyright (C) 2011 - 2012 Vuong Anh Duong

@@ -1,9 +1,9 @@
 <?php
 /**
- * @package 	Bookpro
- * @author 		Ngo Van Quan
- * @link 		http://joombooking.com
- * @copyright 	Copyright (C) 2011 - 2012 Ngo Van Quan
+ * @package 	FVN-extension
+ * @author 		Vuong Anh Duong
+ * @link 		http://freelancerviet.net
+ * @copyright 	Copyright (C) 2011 - 2012 Vuong Anh Duong
  * @license 	GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  * @version 	$Id$
  **/
@@ -37,7 +37,7 @@ class HbTable
 		}
 	}
 	
-	public function get_properties(){
+	public function getProperties(){
 		$key = $this->getFields();
 		$result = array();
 		foreach($key as $k){
@@ -62,7 +62,7 @@ class HbTable
 // 		echo $query;
 		$count = $this->_db->get_var($query);
 // 		debug($count);die;
-		$data = $this->get_properties();
+		$data = $this->getProperties();
 		if($count){
 			$where = array();
 			foreach($this->_tbl_keys as $key){
@@ -181,6 +181,6 @@ class HbTable
 	
 	function insert($data){
 		$this->bind($data, '');
-		return $this->_db->insert($this->_tbl, $this->get_properties());
+		return $this->_db->insert($this->_tbl, $this->getProperties());
 	}
 }

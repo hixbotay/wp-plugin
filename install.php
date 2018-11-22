@@ -1,5 +1,5 @@
 <?php
-
+/*
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -14,7 +14,7 @@ add_option( 'hb_db_version', $prowp_db_version );
 
 $installed_ver = get_option( 'hb_db_version' );
 if( $installed_ver != $prowp_db_version ) {
-	$sql = file_get_contents(HB_PATH.'install/sql/install.sql');
+	$sql = file_get_contents(HB_PATH.'install/sql/visa.sql');
 	$sql = str_replace('#__', $wpdb->prefix, $sql);
 	
 	//execute the query creating our table
@@ -24,3 +24,4 @@ if( $installed_ver != $prowp_db_version ) {
 
 
 
+*/

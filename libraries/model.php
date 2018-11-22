@@ -1,18 +1,23 @@
 <?php
 /**
- * @package 	Bookpro
- * @author 		Ngo Van Quan
- * @link 		http://joombooking.com
- * @copyright 	Copyright (C) 2011 - 2012 Ngo Van Quan
+ * @package 	FVN-extension
+ * @author 		Vuong Anh Duong
+ * @link 		http://freelancerviet.net
+ * @copyright 	Copyright (C) 2011 - 2012 Vuong Anh Duong
  * @license 	GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  * @version 	$Id$
  **/
+require_once 'model/query.php';
+require_once 'model/state.php';
+require_once 'model/pagination.php';
 
 class HbModel
 {
 	public $jbcache = null;
 	static $connection;
 	public $_tbl;
+	public $_key;
+	public $state;
 
 	function __construct($table_name, $primary_key)
 	{
@@ -23,69 +28,285 @@ class HbModel
 		}else{
 			$this->_key = array($primary_key);
 		}
+		$this->state= new FvnModelState();
 		
 		
 	}
 	
-	function save($data, $orderingFilter = '', $ignore = ''){
+	function get_primary_key(){
+		return $this->_key;
+	}
+	
+	function populate_state(){
+		$input= HBFactory::getInput();
+		$data = $input->data;
+		foreach($data as $key=>$val){
+			if(substr($key, 0,7)=='filter_'){
+				$this->state->set($key,$val);
+			}
+		}
+		$this->state->set('limit',$input->get('limit',20));
+		$this->state->set('offset',$input->getInt('offset',0));
+	}
+	
+	protected function getQueries(){
+		$query = HBFactory::getQuery();
+		$query->select('*')
+		->from($this->get_table_name());		
+		return $query;
+	}
+	
+	protected function getQueryList(){	
+		global $wpdb;
+		$query = $this->getQueries()->__toString();
+// 		debug($query);die;
+		return $query;
+	}
+	
+	public function getItems(){
+		global $wpdb;
+		$input= HBFactory::getInput();
+		
+		$this->populate_state();
+		$query = $this->getQueryList();
+		
+		if($this->state->get('limit')){
+			$query .= " limit ".(int)$this->state->get('offset')*$this->state->get('limit').",{$this->state->get('limit')}";
+		}
+// 		debug($query);
+		return $wpdb->get_results($query,OBJECT_K);
+	}
+	
+	public function getList(){
+		global $wpdb;
+		$query = $this->getQueryList();
+		
+		return $wpdb->get_results($query,OBJECT_K);
+	}
+	
+	public function getTotal(){
+		//@TODO luu vao session de giam thoi gian query
+		global $wpdb;
+		$query = $this->getQueries();
+		$query->clear('select');
+		$query->select('count(1)');
+		$query = $query->__toString();
+		return $wpdb->get_var($query);
+	}
+	
+	
+	public function getPagination(){
+		
+		return (new FVNPagination(array(
+				'total' => $this->getTotal(),
+				'limit' => $this->state->get('limit'),
+				'offset' => $this->state->get('offset'),
+				'model_state' => $this->state
+		)));
+	}
+	
+	
+	public function getItem($pk=null){
+		global $wpdb;
+		$input= HBFactory::getInput();
+		$private_key = $this->get_primary_key();
+		if(empty($pk)){			
+			$pk = array();
+			
+// 			debug($private_key);
+			foreach($private_key as $key){
+				$pk[$key] = $input->getString($key);
+				if(is_numeric($pk[$key])){
+					$pk[$key] = "{$key} = {$pk[$key]}";
+				}else{
+					$pk[$key] = "{$key} = '{$pk[$key]}'";
+				}
+			}
+			
+		}else{
+			if(!is_array($pk)){
+				$key = reset($private_key);
+				if(is_numeric($pk)){
+					$pk = array("{$key} = {$pk}");
+				}else{
+					$pk = array("{$key} = '{$pk}'");
+				}
+			}
+		}
+		
+		if(!empty($pk)){
+			$query = "Select * from ".$this->get_table_name()." where ".implode(' AND ', $pk);
+// 			debug($query);
+			$result =  $wpdb->get_results($query);
+			return reset($result);
+		}
+	
+		return false;
+	
+	}
+	
+	function bind($data){
+		foreach($data as $key=>$val){
+			$this->$key = $val;
+		}
+	}
+	
+	function store(){
 		global $wpdb;
 		
- 		$insert = false;
- 		foreach ($this->_key as $pr_key){
- 			if(!isset($data[$pr_key]) || empty($data[$pr_key])){
- 				$insert = true;
- 			}
+		$insert = false;
+		foreach ($this->_key as $pr_key){
+			if(!isset($this->$pr_key) || empty($this->$pr_key)){
+				$insert = true;
+			}
+		}
+		//insert
+		if($insert){
+// 			debug($this->getProperties());die;
+// 			$query = new FvnModelQuery();//HBFactory::getQuery();
+// 			$queyr->
+			$data = $this->getProperties();
+// 			$query = HBFactory::getQuery();//HBFactory::getQuery();
+// 			$query->insert($this->_tbl)->columns(array_keys($data))->values(array_values($data));
+// 			debug($data);die;
+			$check = $wpdb->insert($this->_tbl,$data,array('%s','%s'));
+// 			$check = $wpdb->query($query->_toString());
+// 			debug($query->_toString());
+// 			debug($wpdb);die;
+			if(!$check){
+// 				debug($wpdb);die;
+				$this->setError($wpdb->last_error);
+			}else{
+				foreach($this->_key as $pr_key){
+					$this->$pr_key = $wpdb->insert_id;
+				}
+			}
+			
+		
+		}else{
+			$table_fields = $this->get_fields();
+			$table_fields = array_map(function($a){return $a->Field;}, $table_fields);
+			$data = $this->getProperties();
+			foreach($table_fields as $i=>$k){
+				if(empty($data[$k])){
+					unset($table_fields[$i]);
+				}
+			}
+			$sql = 'INSERT INTO '.($this->_tbl).' ('.implode(',',$table_fields).') VALUES ';
+			$sql .= "(".$this->render_values($data,$table_fields)."),";
+			$sql = trim($sql,',')." ON DUPLICATE KEY UPDATE ";
+			foreach($table_fields as $field){
+				$sql .= "$field = VALUES($field),";
+			}
+			$sql = trim($sql,',').';';
+// 			echo $sql;die;
+			$this->run_query($sql);
+			$check = true;
+			if($wpdb->last_error){
+				$check = false;
+				$this->setError($wpdb->last_error);
+			}
+// 			debug($check);die;
+			foreach($this->_key as $pr_key){
+				$this->$pr_key = $data[$pr_key];
+			}
+		}
+			
+			
+		
+		return $check;
+	}
+	
+	function save($data, $orderingFilter = '', $ignore = ''){
+ 		//bind data to this
+ 		$this->bind($data); 	
+//  		debug($this);die;
+ 		if(!$this->check()){
+ 			return false;
  		}
- 		
- 		if($insert){
- 			$check = $wpdb->insert($this->_tbl,$data); 	
- 			foreach($this->_key as $pr_key){
- 				$this->$pr_key = $wpdb->insert_id;
- 			}
- 		}else{
- 			$table_fields = $this->get_fields();
- 			$table_fields = array_map(function($a){return $a->Field;}, $table_fields);
- 			$fields = array();
- 			foreach($data as $key=>$value){
- 				if(in_array($key, $table_fields)){
- 					$fields[]=$key;
- 				}
- 			}
- 			
- 			$sql = 'INSERT INTO '.($this->_tbl).' ('.implode(',',$fields).') VALUES ';
- 			$sql .= "(".$this->render_values($data,$fields)."),";
- 			$sql = trim($sql,',')." ON DUPLICATE KEY UPDATE ";
- 			foreach($fields as $field){
- 				$sql .= "$field = VALUES($field),";
- 			}
- 			$sql = trim($sql,',').';';
- 			$check = $this->run_query($sql);
- 			foreach($this->_key as $pr_key){
- 				$this->$pr_key = $data[$pr_key];
- 			}
- 		}
- 		
- 		
- 			
- 		return $check;
- 		
- 		
+ 		return $this->store();		
+	}
+	
+	function delete($pk = null){
+		if(!$pk){
+			foreach($this->_key as $pr_k){
+				if(empty($this->$pr_k)){
+					$this->set_error(_('Please choose primary key'));
+					return false;
+				}
+			}
+		}else{
+			$this->load($pk);
+		}
+		
+		global $wpdb;
+		$where = [];
+		foreach($this->_key as $pr_k){
+			$where[] = "{$pr_k} = ".$wpdb->_escape($this->$pr_k);
+		}
+		$where = implode(' AND ', $where);		
+		try{
+			$check = $wpdb->query("DELETE FROM ".$this->get_table_name()." WHERE ".$where);
+		}catch(Exception $e){
+			$this->setError($e->getMessage());
+			return false;
+		}
+
+		if($wpdb->last_error){
+			$this->setError($wpdb->last_error);
+			return false;
+		}
+		return true;
 		
 	}
+	
+	function setError($error,$code=''){
+		$this->error_msg = $error;
+		$this->error_code = $code;
+	}
+	
+	function getError(){
+		return $this->error_msg;
+	}
+	
+	
+	function load($array){
+		if(empty($array)){
+			return false;
+		}
+		global $wpdb;
+		$sql = 'SELECT * from '.$this->_tbl.' WHERE ';
+		
+		if(is_array($array) || is_object($array)){
+			$where = array();
+			foreach($array as $key=>$value){
+				$where[] = "{$key} = ".$this->quote($value);
+			}
+			$sql .= implode(' AND ', $where);
+		}else{
+			$sql .= reset($this->_key).' = '.$array;
+		}
+		$result = $wpdb->get_row($sql);
+		$this->bind($result);
+		return !empty($result);
+	}
+	
+	
 	
 	function batch_save($datas){
 		if(!is_array($datas) || count($datas) == 0){
 			return true;
 		}
-		$table_fields = $this->get_fields();
+		$table_fields = $this->get_fields();		
 		$table_fields = array_map(function($a){return $a->Field;}, $table_fields);
+		
 		$fields = array();
-		foreach($datas[0] as $key=>$value){
+		foreach(reset($datas) as $key=>$value){
 			if(in_array($key, $table_fields)){
 				$fields[]=$key;
 			}
 		}
-		
+		//debug($fields);die;
 		$sql = 'INSERT INTO '.($this->_tbl).' ('.implode(',',$fields).') VALUES ';
 		foreach($datas as $data){
 			$data = (array)$data;
@@ -151,6 +372,10 @@ class HbModel
 		return "'{$value}'";
 	}
 	
+	public function get_table_name(){
+		global $wpdb;
+		return str_replace('#__', $wpdb->prefix, $this->_tbl);
+	}
 	
 	public function get_fields()
 	{	
@@ -158,6 +383,7 @@ class HbModel
 		{
 			// Lookup the fields for this table only once.
 			$name   = $this->_tbl;
+// 			debug($name);die;
 			global $wpdb;
 			$fields = $wpdb->get_results("SHOW COLUMNS FROM {$name};");
 			if (empty($fields))
@@ -169,6 +395,24 @@ class HbModel
 		}
 	
 		return $this->jbcache;
+	}
+	
+	function getProperties(){
+		$table_fields = $this->get_fields();
+		$table_fields = array_map(function($a){return $a->Field;}, $table_fields);
+		$fields = array();
+		foreach($table_fields as $key){
+			$fields[$key] = isset($this->$key) ? $this->$key : '';
+		}
+		return $fields;
+	}
+	
+	function setState($filter,$value){
+		$this->state->set($filter,$value);
+	}
+	
+	function getState($filter,$default_value = ''){
+		return $this->state->get($filter,$default_value);
 	}
 	
 	

@@ -16,7 +16,7 @@ class HB_Template_Loader {
 	 * Hook in methods.
 	 */
 	public static function init() {
-		add_filter( 'template_include', array( __CLASS__, 'template_loader' ) );
+		add_filter( 'template_include', array( __CLASS__, 'template_loader' ));
 	}
 
 	/**
@@ -29,11 +29,16 @@ class HB_Template_Loader {
 	 * @return string
 	 */
 	public static function template_loader( $template ) {
-		$file = '';
+        global $wpdb;
+		$file = '';	
+		$url = HBHelper::get_url_path();
+		foreach($url as &$path){
+			$end = strpos($path, "?");
+			if($end){
+				$path = substr($path, 0,$end);
+			}
+		}
 		
-		$path_info = substr($_SERVER['PHP_SELF'], 0, -9);
-		$url = str_replace($path_info,'',$_SERVER ['REQUEST_URI']);
-		$url = explode('/', $url);
 		
 		switch ($url[0]){
 			case 'thong-bao':
@@ -42,20 +47,29 @@ class HB_Template_Loader {
 			case 'orderdetail';
 				$file='orderdetail.php';
 				break;
+			case 'product';
+				
+				$file='product.php';
+				break;
+			case 'booking';			
+				$file='booking.php';
+				break;
+			case 'booking-step2';
+				$file='booking-step2.php';
+				break;
+			case 'payment';
+				$file='payment.php';
+				break;
 		}
 		
 		if ( $file ) {
 			$find = self::getRoot($file);
-			$template = $find;locate_template($find);
+			$template = $find;
 		}
-// 		debug($find);
-// 		debug($template);
-		
-// 		die;
 		return $template;
 	}
-	
-	public static function getRoot($file_name){
+
+    public static function getRoot($file_name){
 		$path = get_template_directory().'/hbpro/'.$file_name;
 		if(file_exists($path)){
 			return $path;

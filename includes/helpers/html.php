@@ -4,7 +4,7 @@
 /**
  * Support for generating html code
  *
- * @package 	Bookpro
+ * @package 	FVN-extension
  * @author 		Vuong Anh Duong
  * @link 		http://http://woafun.com/
  * @copyright 	Copyright (C) 2011 - 2012 Vuong Anh Duong
@@ -16,7 +16,7 @@ defined('ABSPATH') or die('Restricted access');
 class HBHtml
 {
 	/**
-	 * Return a select list html
+	 * Return a select options html
 	 * @param mixed $list list of option format array(object,object,etc)
 	 * @param string $name name of select list box
 	 * @param string $attr attributes of select
@@ -25,10 +25,13 @@ class HBHtml
 	 * @param unknown $selected selected value
 	 * @param unknown $id id of select list box
 	 */
-	static function select($list, $name, $attr, $key, $label, $selected = null, $id=null){
+	static function select($options, $name, $attr, $key, $label, $selected = null, $id=null,$blank_select = ''){
+		if($blank_select){
+			array_unshift($options, (object)array($label=>$blank_select,$key=>''));
+		}
 		$ids = $id ? 'id="'.$id.'"' : '';
 		$html = '<select name="'.$name.'" '.$attr.' '.$ids.'>';
-		foreach ($list as $i=>$object){
+		foreach ($options as $i=>$object){
 			$html .= '<option value="'.$object->$key.'" '.selected($object->$key, $selected,false).' >'.$object->$label.'</option>';
 		}
 		$html .= '</select>';
@@ -215,9 +218,13 @@ class HBHtml
 	static function media_select($name,$id,$selected='') {
 		// Save attachment ID
 		wp_enqueue_media();
+		$src = '';
+		if($selected){
+			$src = reset(wp_get_attachment_image_src($selected,'thumbnail',true));
+		}
 		?>	
 			<div class='image-preview-wrapper'>
-				<img id='image-preview' src='' width='100' height='100' style='max-height: 100px; width: 100px;'>
+				<img id='image-preview' src='<?php echo $src?>' width='100' height='100' style='max-height: 100px; width: 100px;'>
 			</div>
 			<input id="upload_image_button" type="button" class="button" value="<?php _e( 'Upload image' ); ?>" />
 			<input type='hidden' name='<?php echo $name?>' id='<?php echo $id?>' value='<?php echo $selected?>'>

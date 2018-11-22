@@ -1,6 +1,6 @@
 <?php
 /**
- * @package 	Bookpro
+ * @package 	FVN-extension
  * @author 		Joombooking
  * @link 		http://http://woafun.com/
  * @copyright 	Copyright (C) 2011 - 2012 Vuong Anh Duong
@@ -14,43 +14,34 @@ class HBActionPayment extends HBAction{
 	 * Generate checkout page of payment gateway
 	 */
 	function process(){
-		HBImporter::classes('order/route');
+		HBImporter::model('orders');
+		$order = new HBModelOrders();
+		$order->load($this->input->getInt('order_id'));
+// 		HBHelper::check_nonce();				
+		if($order->pay_status=='SUCCESS'){
+			wp_redirect(HBHelper::get_order_link($order));exit;
+		}
+		$payment_plugin = $this->input->getString('pay_method','');
 		
-		HBHelper::check_nonce();				
+		$order->pay_method=$payment_plugin;
+		$order->store();	
 		
-		$payment_plugin = $this->input->getString('payment_plugin','');
+// 		debug($order);die;
 		
-		$element=substr($payment_plugin, 10);
-		$order_id=$this->input->getInt('order_id');
-		//Saving payment method
-		$order = new HBOrderRoute();
-		$order->load($order_id);
-		$order->pay_method=$element[1];
-		$order->store();		
-		
-		do_action('HB_order_process_checkout',$order);		
-		
-		$values['email']=$customer->email;
-		$values['first_name']=$customer->firstname;
-		$values['last_name']=$customer->lastname;
-		$values['address']=$customer->address;
-		$values['mobile']=$customer->mobile;
-		$values['zip']=$customer->zip;
-		$values['city']=$customer->city;
-		$values['desc']=$order->order_number;
-		$values['total']=$order->total;
-		$values['order_number']=$order->order_number;
-		
+		do_action('fvn_order_process_checkout',$order);		
+		$order_id = $order->id;
 		//Trigger _preparePayment of payment gateway to generate checkout page
 		//import core plugin
+		$payment_plugin = 'hbpayment_'.$payment_plugin;
 		HBImporter::corePaymentPlugin();
+		$order_id = $order->id;
 		$payment = new $payment_plugin();
 		$payment->config = HBFactory::getConfig();
-		$payment->returnUrl = site_url("index.php?hbaction=payment&task=postpayment&medthod=$payment_plugin&paction=display_message&order_id=$order_id");
-		$payment->cancelUrl = site_url("index.php?hbaction=payment&task=postpayment&medthod=$payment_plugin&paction=cancel&order_id=$order_id");
-		$payment->notifyUrl = site_url("index.php?hbaction=payment&task=postpayment&medthod=$payment_plugin&paction=process&order_id=$order_id");
+		$payment->return_url = site_url("index.php?hbaction=payment&task=confirm&method={$payment_plugin}&paction=display_message&order_id=$order_id");
+		$payment->cancel_url = site_url("index.php?hbaction=payment&task=confirm&method={$payment_plugin}&paction=cancel&order_id=$order_id");
+		$payment->notify_url = site_url("index.php?hbaction=payment&task=confirm&method={$payment_plugin}&paction=process&order_id=$order_id");
 		$payment->order = $order;
-		$payment->_prePayment($values);
+		$result = $payment->_prePayment();
 		
 		
 		return;
@@ -89,40 +80,58 @@ class HBActionPayment extends HBAction{
 	/**
 	 * Process payment after return from 
 	 */
-	function postpayment()
+	function confirm()
 	{
 		//import core plugin
 		HBImporter::corePaymentPlugin();
+		HBImporter::model('orders');
 		
-		do_action('HB_order_process_execute_before');
+		do_action('hb_order_process_execute_before');
 		
 		$plugin = $this->input->getString('method');
+		$config = HBFactory::getConfig();
 		
-		$payment = new $plugin();
-		
-		$payment->order = new HBOrder();
+		$payment = new $plugin();	
+		$payment->config = $config;
+		$payment->order = new HBModelOrders();
 		$results = $payment->_postPayment();
 		/// Send email
 		
 		if($results){
-			if(!$results->sendemail){
+			if(!isset($results->sendemail)){
 				//send email
-				$url = site_url().'index.php?hbaction=payment&task=urlsendmail&order_id='.$results->id;
-				HBHelper::pingUrl($url);
+				if($config->allow_curl){
+					$url = site_url().'index.php?hbaction=payment&task=urlsendmail&order_id='.$results->id;
+					HBHelper::pingUrl($url);
+				}else{
+					$this->sendMail($results->id);
+				}
 			}
 		}
 		
-		do_action('HB_order_process_execute_after',$results);
+		do_action('hb_order_process_execute_after',$results);
+		if($results->order_status=='CONFIRMED'){
+			wp_redirect(HBHelper::get_order_link($results));
+		}else{			
+			wp_redirect('index.php?view=message');
+		}
 		
-		//redirect to success page	
-		wp_redirect('index.php?option=com_bookpro&view=postpayment&order_id='.$results->id);
-		return;
+		exit;
 	}
 	
-	private function sendMail($order_id){		
-		HBImporter::helper('email');
-		$mail=new EmailHelper();		
-		return $mail->sendMail($order_id);		
+	private function sendMail($order_id){	
+		HBImporter::model('orders');
+		HBImporter::helper('currency');
+		$model = new HBModelOrders();
+		$new_order =$model->getComplexItem($order_id);
+		$html = HBHelper::renderLayout('client-order-confirm', $new_order,'emails');
+// 		echo $html;die;
+        HBHelper::sendMail($new_order->email,"Confirm Visa booking", $html);
+        
+        $html = HBHelper::renderLayout('admin-order-notice', $new_order,'emails');
+//         debug(HBFactory::getConfig());die;
+        HBHelper::sendMail(HBFactory::getConfig()->company_email, 'New Booking', $html);
+        
 	}
 	
 	//send mail via post curl

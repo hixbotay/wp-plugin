@@ -727,11 +727,14 @@ class HBForm{
 		// Check to see if the path is an absolute path.
 		if (!is_file($file))
 		{
+	
 			return false;
 		}
 	
 		// Attempt to load the XML file.
 		$xml = simplexml_load_file($file);
+		//debug($xml);
+		//echo $xml;die;
 		return $this->load($xml, $reset, $xpath);
 	}
 	

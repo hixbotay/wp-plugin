@@ -12,6 +12,17 @@ class HB_Site_Autoload{
 		add_action( 'init', array($this,'execute_action'),15);
 		$this->includefiles();
 		
+		add_action( 'wp_enqueue_scripts', array($this,'enque_scripts'));
+	}
+	function enque_scripts(){
+		if(HBFactory::getConfig()->get('load_bootstrap_css',1)){
+			wp_enqueue_style( 'bootstrap', site_url(). '/wp-content/plugins/visa-fvn/assets/css/bootstrap.css', '', '1.0.0' );
+		}
+		if(HBFactory::getConfig()->get('load_bootstrap_js',1)){
+			wp_enqueue_script( 'bootstrap', site_url(). '/wp-content/plugins/visa-fvn/assets/js/bootstrap.min.js', array('jquery'), '1.0.0' );
+		}
+		wp_enqueue_style( 'visa', site_url(). '/wp-content/plugins/visa-fvn/assets/css/visa.css', '', '1.0.0' );
+		wp_enqueue_script( 'hbpro-plg-js', site_url(). '/wp-content/plugins/visa-fvn/assets/js/hbpro.js', array('jquery'), '1.0.1', true );
 	}
 	
 	private function is_file($filename){
@@ -27,7 +38,14 @@ class HB_Site_Autoload{
 	 */
 	function execute_action(){
 		$input = HBFactory::getInput();
-		
+		//check offline mode
+		if(HBFactory::getConfig()->get('offline_mode')){
+			if(!current_user_can('manage_options')){
+				if($GLOBALS['pagenow'] !='wp-login.php'){
+				 wp_die('<center><h1>Website đang bảo trì, quý khách vui lòng quay lại sau!</h1></center>');
+				}
+			}
+		}
 		$view= $input->get('view');
 		if($view){
 			include HB_PATH.'templates/'.$view.'.php';

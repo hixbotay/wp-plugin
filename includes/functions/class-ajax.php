@@ -1,9 +1,9 @@
 <?php
 /**
- * @package 	Bookpro
- * @author 		Ngo Van Quan
- * @link 		http://joombooking.com
- * @copyright 	Copyright (C) 2011 - 2012 Ngo Van Quan
+ * @package 	FVN-extension
+ * @author 		Vuong Anh Duong
+ * @link 		http://freelancerviet.net
+ * @copyright 	Copyright (C) 2011 - 2012 Vuong Anh Duong
  * @license 	GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  * @version 	$Id$
  **/
@@ -89,5 +89,12 @@ class HBActionAjax extends HBAction{
 			$post->link .= '?raw=1';
 		}
 		$this->renderJson($posts);
+	}
+	
+	function count_post(){
+		$post_id = $this->input->getInt('post_id');
+		if($post_id)
+			hb_set_post_view($post_id);
+		exit;
 	}
 }

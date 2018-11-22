@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @package 	Bookpro
+ * @package 	FVN-extension
  * @author 		Joombooking
  * @link 		http://http://woafun.com/
  * @copyright 	Copyright (C) 2011 - 2012 Vuong Anh Duong

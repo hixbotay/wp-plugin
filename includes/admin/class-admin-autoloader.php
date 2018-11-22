@@ -8,7 +8,9 @@ class HB_Admin_Autoload{
 	}
 	
 	public function load(){
-		
+		if(is_file(ABSPATH.'/tmp/demo-mode.txt')){
+			
+		}
 		//load require files when show list of post_type
 		if(isset($_REQUEST['post_type'])){
 			$view_name = substr($_REQUEST['post_type'], 8);
@@ -18,49 +20,43 @@ class HB_Admin_Autoload{
 			}
 			
 		}
-		
-		//defined action in request to execute
-		add_action( 'admin_post_hbaction', array($this,'execute_action'),15,1);
-		$role_object = get_role( 'editor' );
-		$role_object->add_cap( 'edit_theme_options' );
+		add_action( 'admin_enqueue_scripts', array($this,'enque_scripts'));
+		add_action( 'admin_init', array($this,'execute_action'));
+	}
+	function enque_scripts(){
+		wp_enqueue_style( 'bootstrap', site_url(). '/wp-content/plugins/visa-fvn/assets/css/bootstrap.css', '', '1.0.0' );
+		wp_enqueue_script( 'bootstrap', site_url(). '/wp-content/plugins/visa-fvn/assets/js/bootstrap.min.js', array('jquery'), '1.0.0' );
+		wp_enqueue_script( 'hbpro-plg-js', site_url(). '/wp-content/plugins/visa-fvn/assets/js/hbpro.js', array('jquery'), '1.0.0', true );
 	}
 	
 	public function is_file($filename){
 		return is_file(HB_PATH.$filename);
 	}
-	
-	/**
-	 * Execute admin-post function via url request
-	 */
 	function execute_action(){
-		if(!current_user_can( 'manage_options' )){
-			wp_redirect(admin_url('wp-login.php'));
-			exit;
-		}
 		
 		$input = HBFactory::getInput();
 		$request_action = $input->get('hbaction');
-		
+	
 		//$user = wp_get_current_user();
 		//debug($user);die;
-		
+	
 		if($request_action){
 			// Check the nonce
 			$meta_nonce = $input->get('hb_meta_nonce');
-			if ( empty( $meta_nonce ) || ! wp_verify_nonce( $input->get('hb_meta_nonce'), 'hb_action' ) ) {			
-				die('retricted access');
-				exit;
+			if ( empty( $meta_nonce ) || ! wp_verify_nonce( $input->get('hb_meta_nonce'), 'hb_action' ) ) {
+				//@TODO check nonce
 			}
 			$task = $input->get('task');
 			//Import action by request
 			HBImporter::viewaction($request_action);
 			$class = 'hbaction'.$request_action;
-		
+	
 			$action = new $class;
 			$action->execute($task);
 			exit;
 		}
-		exit;
 	}
+	
+	
 	
 }

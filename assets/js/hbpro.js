@@ -15,7 +15,10 @@ function jtrigger_error(message,style){
 	jQuery('body').append(html);    	
 }
 
-
+function hb_submit_form(task){
+	jQuery('input[name="task"]').val(task);
+	jQuery('#adminForm').submit();
+}
 //show modal pop-up
 (function ($) {
 	
@@ -391,7 +394,7 @@ function format_date(date,format,convert){
 
 function display_processing_form(enable){
 	if(enable){
-		jQuery('body').append('<img id="jbform_loading"  style="position: fixed;top:50%;left: 50%;margin-left: -100px;margin-top: -100px;width:200px;height:200px;" src="'+siteURL+'/wp-content/plugins/hbpro/assets/images/loading.gif"/>');
+		jQuery('body').append('<img id="jbform_loading"  style="position: fixed;top:50%;left: 50%;margin-left: -100px;margin-top: -100px;width:200px;height:200px;" src="/wp-content/plugins/visa-fvn/assets/images/loading.gif"/>');
 
 	}else{
 		jQuery('#jbform_loading').remove();
@@ -611,3 +614,14 @@ function display_processing_form(enable){
 		data: []
     };
 }(window.jQuery));
+
+
+function jnotice(msg){
+	if(jQuery('#jbnotice').length){
+		jQuery('#jbnotice').remove();
+	}
+	var html = '<div id="jbnotice" style="text-align:center;font-size:20px;border: 1px solid #ccc;background: rgba(95, 186, 125, 0.7);color:white;position:fixed;width:300px;top:50%;left:50%;margin-left:-150px;magrin-top:-20px;line-height:40px;padding:10px;">'+msg+'</div>';
+	jQuery('body').append(html);
+	jQuery('#jbnotice').fadeOut(3000);
+
+}

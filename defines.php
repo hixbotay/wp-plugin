@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @package 	Bookpro
+ * @package 	FVN-extension
  * @author 		Vuong Anh Duong
  * @link 		http://http://hbpro.com/
  * @copyright 	Copyright (C) 2011 - 2012 Vuong Anh Duong
@@ -11,7 +11,7 @@
 //namespace HB;
 defined('ABSPATH') or die('Restricted access');
 //Plugin root path
-define('HB_PATH', plugin_dir_path(__DIR__).'hbpro/');
+define('HB_PATH', plugin_dir_path(__DIR__).'visa-fvn/');
 if(!defined('DS')){
 	define('DS','/');
 }

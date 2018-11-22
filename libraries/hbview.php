@@ -108,12 +108,14 @@ class HBAdminView{
 		}
 
 		$this->_path = $this->_basePath . 'includes/admin/' .$this->_name . '/tmpl';
-		
+// 		debug($this->_name);
 		if (HBImporter::find($this->_basePath. 'includes/admin/' .$this->_name, 'model')){
+			
 			HBImporter::includes('admin/'.$this->_name.'/model');
 			$class_model = "HBModel{$this->_name}";
 			$this->_defaultModel = $class_model;
 			$this->_models[$class_model] = new $class_model();
+// 			$this->model = $this->getModel();
 		}
 		
 

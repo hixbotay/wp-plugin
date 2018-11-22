@@ -53,10 +53,11 @@ function hbpro_add_head_script(){
 add_action('admin_head', 'hbpro_add_head_script');
 
 function hbpro_plg_scripts() {
-	wp_enqueue_script( 'hbpro-plg-js', site_url(). '/wp-content/plugins/hbpro/assets/js/hbpro.js', array('jquery'), '1.0.0', true );
+	wp_enqueue_script( 'hbpro-plg-js', site_url(). '/wp-content/plugins/visa-fvn/assets/js/hbpro.js', array('jquery'), '1.0.0', true );
+	
 }
 
-add_action( 'wp_enqueue_scripts', 'hbpro_plg_scripts' );
+
 /*
  * Get language code
  */

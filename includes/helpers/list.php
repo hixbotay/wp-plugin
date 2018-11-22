@@ -120,7 +120,7 @@ class HBList{
 		$options = get_option ( 'active_plugins' );
 		$result = array();
 		foreach ($options as $plugin){
-			if(preg_match('/^jbpayment_\w*/', $plugin)){
+			if(preg_match('/^hbpayment_\w*/', $plugin)){
 				$name = explode('/', $plugin);
 				$result[] = (object)array('name'=>$name[0],'title'=>substr($name[0], 10),'file'=>ABSPATH."wp-content/plugins/$name[0]/");
 			}
@@ -136,7 +136,7 @@ class HBList{
 		$result = array();
 		$files = scandir (HB_PATH.'includes/gateways');
 		foreach ($files as $plugin){
-			if(preg_match('/^jbpayment_\w*/', $plugin)){
+			if(preg_match('/^hbpayment_\w*/', $plugin)){
 				$name = explode('/', $plugin);
 				$result[] = (object)array('name'=>$name[0],'title'=>substr($name[0], 10),'file'=>HB_PATH."includes/gateways/$plugin/");
 			}
@@ -150,6 +150,7 @@ class HBList{
 	static function getPaymentAvailPlugin($enable = true,$check_permission = false){
 		$result = array();
 		$core = self::getCorePaymentMethod();
+// 		debug($core);
 		//check core method that is it turn on
 		if($enable){
 			foreach ($core as $i=>$plugin){

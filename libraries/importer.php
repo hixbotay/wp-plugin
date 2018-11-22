@@ -16,7 +16,7 @@
 defined('ABSPATH') or die('Restricted access');
 class HBImporter
 {
-	static $libraries = array();
+	static $libs = array();
 	/**
 	 * Add bootstrap library
 	 */
@@ -36,6 +36,7 @@ class HBImporter
         if (! is_array($names)) {
             $names = array($names);
         }
+        
         $filePathMask = HB_PATH  . $base . '/%s.' . $ext;
         foreach ($names as $name) {
             self::importFile(sprintf($filePathMask, $name));
@@ -109,9 +110,9 @@ class HBImporter
     	$names = func_get_args();
     	foreach ($names as $name){
     		//avoid include a class twice with diffrent location
-    		if(!isset(self::$libraries[$name])){
+    		if(!isset(self::$libs[$name])){
     			self::import('libraries', $name);
-    			self::$libraries[$name] = 1;
+    			self::$libs[$name] = 1;
     		}
     	}
     	return true;
@@ -157,7 +158,9 @@ class HBImporter
     static function model($name)
     {
         $names = func_get_args();
-        self::import('models', $names);
+        foreach($names as $name){
+        	self::import('includes/admin/'.$name, 'model');
+        }        
     }
 
     /**
@@ -230,7 +233,7 @@ class HBImporter
 	static function corePaymentPlugin(){
 		$files = scandir (HB_PATH.'includes/gateways');
 		foreach ($files as $plugin){
-			if(preg_match('/^jbpayment_\w*/', $plugin)){
+			if(preg_match('/^hbpayment_\w*/', $plugin)){
 				require_once HB_PATH."includes/gateways/{$plugin}/{$plugin}.php";
 			}
 		}

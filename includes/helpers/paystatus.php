@@ -2,7 +2,7 @@
 /**
  * Payment status.
  *
- * @package Bookpro
+ * @package FVN-extension
  * @author Vuong Anh Duong
  * @link http://http://woafun.com/
  * @copyright Copyright (C) 2011 - 2012 Vuong Anh Duong
@@ -24,13 +24,13 @@ class PayStatus {
 
 	public function __construct($value) {
 		$this->value = $value;
-		$this->text= JText::_('COM_BOOKPRO_PAYMENT_STATUS_'.strtoupper($this->value));
+		$this->text= __(strtoupper($this->value));
 	}
 	static function format($status){
-		return JText::_('COM_BOOKPRO_PAYMENT_STATUS_'.strtoupper($status));
+		return __(strtoupper($status));
 	}
 	public function getText() {
-		return JText::_('COM_BOOKPRO_PAYMENT_STATUS_'.strtoupper($this->value));
+		return __(strtoupper($this->value));
 	}
 	
 
@@ -45,7 +45,7 @@ class PayStatus {
 	
 	static function getHtmlList($name,$attribute,$select,$id=null) {
 		self::init();
-		return JHtmlSelect::genericlist(self::$map,$name, $attribute ,'value', 'text', $select,$id);
+		return HBHtml::select(self::$map,$name, $attribute ,'value', 'text', $select,$id);
 	}
 
 	public static function get($element) {
