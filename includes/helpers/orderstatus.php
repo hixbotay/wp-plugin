@@ -49,9 +49,9 @@ class OrderStatus {
 		return __(strtoupper($status));
 	}
 	
-	static function getHtmlList($name,$attribute,$select,$id=null) {
+	static function getHtmlList($name,$attribute,$select,$id=null,$blank_text='') {
 		self::init();
-		return HBHtml::select(self::$all,$name, $attribute ,'value', 'text', $select,$id);
+		return FvnHtml::select(self::$all,$name, $attribute ,'value', 'text', $select,$id,$blank_text);
 	}
 	
 	public function getText() {

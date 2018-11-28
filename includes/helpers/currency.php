@@ -29,17 +29,24 @@ class HBCurrencyHelper{
 	private static function formatNumberWConfig($value,$decimalpoint,$thousand){
 		if ($value) {
 			$value = number_format($value, $decimalpoint, '.',$thousand);
-			// 			$length = JString::strlen($value);
-			// 			if (JString::substr($value, $length - 2) == '00')
-				// 				$newval= JString::substr($value, 0, $length - 3);
-				// 			elseif (JString::substr($value, $length - 1) == '0')
-				// 			$newval= JString::substr($value, 0, $length - 1);
-				// 			else
-				$newval=$value;
+			if($decimalpoint > 0){
+				
+				
+				for($i=1;$i<=$decimalpoint;$i++){
+					$length = strlen($value);
+					if($value[($length-1)] == '0'){
+						$value= substr($value, 0, (strlen($value) - 1));
+					}else{
+						break;
+					}
+				}
+				$value=trim($value,'.');
+				
+			}
 		}
 		else
-			$newval = 0;
-		return $newval;
+			$value = 0;
+		return $value;
 	}
 	
 	private static function disPlayCurrency($value,$symbol,$currency_type){

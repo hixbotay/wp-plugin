@@ -25,7 +25,10 @@ wp_enqueue_style( 'visa', site_url(). '/wp-content/plugins/visa-fvn/assets/css/v
 	<p>Please select one of below payment method to proceed the visa application.</p>
 	 
                     <div id="payment-area">
-                        <p><input type="radio" name="pay_method" value="paypal" checked="checked"/><img src="https://www.paypalobjects.com/webstatic/mktg/logo-center/PP_Acceptance_Marks_for_LogoCenter_266x142.png?01AD=39-fyRS8I-n5xFc-JIzcXqDql2n6M9wGCEszIwFf3ZXFEuPKp6ena6A&01RI=4E1BBBDDE2B7CDD&01NA=na"/></p>
+                        <p><input type="radio" name="pay_method" value="paypal" checked="checked"/><img style="width:200px" src="https://www.paypalobjects.com/webstatic/mktg/logo-center/PP_Acceptance_Marks_for_LogoCenter_266x142.png?01AD=39-fyRS8I-n5xFc-JIzcXqDql2n6M9wGCEszIwFf3ZXFEuPKp6ena6A&01RI=4E1BBBDDE2B7CDD&01NA=na"/>
+                      <a target="_blank" href="https://www.onepay.vn/"><img style="width:200px" src="<?php echo site_url()?>/wp-content/plugins/visa-fvn/assets/images/logo-onepay.png"/></a>
+                      </p>
+                        
                         
                     </div>
 <input type="hidden" name="order_id" value="<?php echo $input->getInt('order_id')?>"/>

@@ -39,8 +39,11 @@ class FvnPriceHelper{
 			$result['total'] += $result['airport_fast_track']['total'];
 		}
 		if($params['car_service']){
-			$result['car_service'] = $config->get('car_pick_up_'.$params['car_service']);			
-			$result['total'] += $result['car_service'];
+			if($params['airport']->params[$params['car_service']]){
+				$result['car_service'] = $params['airport']->params[$params['car_service']];
+				$result['total'] += $result['car_service'];
+			}
+			
 		}
 		
 		

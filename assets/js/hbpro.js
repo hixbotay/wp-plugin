@@ -6,6 +6,24 @@ jQuery(document).ready(function($){
 		x=e.pageX;y=e.pageY;
 		$('.error-message-alert').remove();
 	});
+	$('.fvn-function').click(function(){
+		var ask = $(this).attr('data-ask');
+		if(ask){
+			var question = $(this).attr('data-question');
+			if(!question){
+				question = 'Do you want to process?';
+			}
+			if(!confirm(question)){
+				return false;
+			}
+		}
+		var link = $(this).attr('data-href');
+		if(link){
+			window.location.href=link;
+			return;
+		}
+		return hb_submit_form($(this).attr('action'));
+	});
 });
 function jtrigger_error(message,style){
 	if(style !='' ||  style !== undefined){
@@ -176,54 +194,15 @@ function hb_submit_form(task){
      * @param type type of popup(just have warning)
      */
     jAlert = function(message,title,type) {
-    	if ($('.confirmation-modal').length > 0){
-    		$('.confirmation-modal').modal('hide');
-    	}
-    		
-    	if (type == 'warning')
-    		title = '<span style="color:red"><i class="icon-warning"></i></span>&nbsp;'+title;
-       
-        
-        if(title == undefined){
-        	var modalHTML =
-                '<div class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">' +
-                    '<div class="modal-dialog" role="document">' +
-                        '<div class="modal-content">'+                        	
-                            '<div class="modal-body">' + message + '</div>' +
-                            '<div class="modal-footer" style="">' +
-                                '<button class="center btn-primary btn" type="button" data-dismiss="modal">OK</button>' +                                
-                            '</div>' +
-                        '</div>' +
-                    '</div>' +
-                '</div>';  
-        }else{
-        	 var modalHTML =
-                 '<div class="confirmation-modal modal " tabindex="-1" role="dialog">' +
-                     '<div class="modal-dialog">' +
-                         '<div class="modal-content">'+ 
-                         	'<div class="modal-header"><b>'+title+'</b></div>'+
-                             '<div class="modal-body">' + message + '</div>' +
-                             '<div class="modal-footer center" style="">' +
-                                 '<button class="center btn-primary btn" type="button" data-dismiss="modal">OK</button>' +                                
-                             '</div>' +
-                         '</div>' +
-                     '</div>' +
-                 '</div>';
-        }
-        	  
-
-        var modal = $(modalHTML);
-
-        modal.on('shown.bs.modal', function () {
-            modal.find(".btn-primary:first").focus();
-        });
-        modal.on('hidden.bs.modal', function () {
-            modal.remove();
-        });
-      
-        // Show the modal
-        $("body").append(modal);
-        modal.modal('show');
+    	title = title==undefined ? 'Notice' : '';
+    	var html = '<div id="fvn-popup1" class="fvn-overlay">'+
+	'<div class="fvn-popup">'+
+		'<h2>'+title+'</h2>'+
+		'<a class="fvn-close" href="javascript:void(0)" onclick="jQuery(\'#fvn-popup1\').remove();">&times;</a>'+
+		'<div class="content">'+message+'</div>'+
+	'</div>'
+'</div>';
+    	jQuery('body').append(html);
 	}
     
     /**

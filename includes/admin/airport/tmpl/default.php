@@ -20,7 +20,7 @@ defined ( 'ABSPATH' ) or die ( 'Restricted access' );
 	<div class="tablenav top">
 		
 		<div class="alignleft actions">
-			<?php echo HBHtml::text('filter_title', '',$this->input->get('filter_title'))?>
+			<?php echo FvnHtml::text('filter_title', '',$this->input->get('filter_title'))?>
 			<input name="filter_action" id="post-query-submit"
 				class="button" value="Lọc" type="submit">
 		</div>
@@ -43,10 +43,8 @@ defined ( 'ABSPATH' ) or die ( 'Restricted access' );
 						<tr>
 						<td><?php echo $item->name;?></td>
 						<td><a
-							href="admin.php?page=airport&layout=edit&id=<?php echo $item->id?>">Edit</a>
-							<a
-							href="admin.php?hbaction=airport&task=delete&id=<?php echo $item->id?>"
-							class="fvn-function" data-function='airport.delete'>Delete</a></td>
+							href="admin.php?page=airport&layout=edit&id=<?php echo $item->id?>"><?php echo __('Edit')?></a>
+							<a href="javascript:void(0)" class="fvn-function" data-ask="1" data-href="<?php echo admin_url('admin.php?hbaction=airport&task=delete&id='.$item->id)?>"><?php echo __('Delete')?></a></td>
 					</tr>
 					<?php }?>
 				</tbody>

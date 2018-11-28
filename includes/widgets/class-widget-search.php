@@ -38,7 +38,7 @@ class HB_Widget_Search extends HB_Widget {
 				'text' => __ ( 'From', 'hb' ) 
 		);
 		array_unshift ( $options, $option );
-		$select = HBHtml::select ( $options, $field, 'style="width:200px;"', 'value', 'text', $selected, 'desfrom' );
+		$select = FvnHtml::select ( $options, $field, 'style="width:200px;"', 'value', 'text', $selected, 'desfrom' );
 		return $select;
 	}
 	function getArrivalDestination($field, $selected, $from) {
@@ -60,7 +60,7 @@ class HB_Widget_Search extends HB_Widget {
 				'text' => __ ( 'To', 'hb' ) 
 		);
 		array_unshift ( $options, $option );
-		$select = HBHtml::select ( $options, $field, 'style="width:200px;"', 'value', 'text', $selected, 'desto' );
+		$select = FvnHtml::select ( $options, $field, 'style="width:200px;"', 'value', 'text', $selected, 'desto' );
 		return $select;
 	}
 	
@@ -119,7 +119,7 @@ class HB_Widget_Search extends HB_Widget {
 		<div class="col-md-12">
 			<div class="row">
 				<div class="form-inline">
-							<?php echo HBHtml::booleanlist('roundtrip','class="inputbox"',isset($cart->roundtrip) ? $cart->roundtrip : 1,__('Roundtrip','hb'),__('One way','hb'),'roundtrip')?>
+							<?php echo FvnHtml::booleanlist('roundtrip','class="inputbox"',isset($cart->roundtrip) ? $cart->roundtrip : 1,__('Roundtrip','hb'),__('One way','hb'),'roundtrip')?>
 						</div>
 			</div>
 			<div class="row" id="destination_select">
@@ -167,7 +167,7 @@ class HB_Widget_Search extends HB_Widget {
 								<label class="help-inline" for="adult"><?php echo __('Adult','hb')?></label>
 							</div>
 							<div class="controls">
-		            						<?php echo HBHtml::integerlist(1, $adult_limit, 1, 'adult','class="input-mini"',$cart->adult)?>
+		            						<?php echo FvnHtml::integerlist(1, $adult_limit, 1, 'adult','class="input-mini"',$cart->adult)?>
 		            					</div>
 						</div>
 					</div>
@@ -178,7 +178,7 @@ class HB_Widget_Search extends HB_Widget {
 								<label class="help-inline" for="adult"><?php echo __('Child','hb')?> </label>
 							</div>
 							<div class="controls">
-		            							<?php echo HBHtml::integerlist(0, $child_limit, 0, 'children','class="input-mini"',$cart->children)?>
+		            							<?php echo FvnHtml::integerlist(0, $child_limit, 0, 'children','class="input-mini"',$cart->children)?>
 		            						</div>
 						</div>				
 		            				<?php }?>
@@ -190,7 +190,7 @@ class HB_Widget_Search extends HB_Widget {
 								<label class="help-inline" for="adult"><?php echo __('Infant','hb')?></label>
 							</div>
 							<div class="controls">
-		            							<?php echo HBHtml::integerlist(0, $infant_limit, 0, 'infant','class="input-mini"',$cart->infant)?>
+		            							<?php echo FvnHtml::integerlist(0, $infant_limit, 0, 'infant','class="input-mini"',$cart->infant)?>
 		            						</div>
 						</div>
 		            				<?php }?>

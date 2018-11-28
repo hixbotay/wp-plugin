@@ -59,7 +59,7 @@ class HBAdminViewSetting extends HBAdminView {
 		?>
 		<h2 class="nav-tab-wrapper">
 			<a href="?page=setting" class="nav-tab <?php echo $active_tab == '' ? 'nav-tab-active' : ''; ?>"><?php echo __('Setting','hb')?></a>
-			<!--<a href="?page=setting&layout=notify" class="nav-tab <?php echo $active_tab == 'notify' ? 'nav-tab-active' : ''; ?>"><?php echo __('Notify','hb')?></a> -->
+			<a href="?page=setting&layout=notify" class="nav-tab <?php echo $active_tab == 'notify' ? 'nav-tab-active' : ''; ?>"><?php echo __('Email setting')?></a>
 			<a href="?page=setting&layout=checkout" class="nav-tab <?php echo $active_tab == 'checkout' ? 'nav-tab-active' : ''; ?>"><?php echo __('Checkout','hb')?></a>
 		</h2>
 		<?php

@@ -21,4 +21,5 @@ class HBModelAirport extends HbModel{
 		return $query;		
 	}
 	
+	
 }

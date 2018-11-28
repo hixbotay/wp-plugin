@@ -23,7 +23,20 @@ class HBActionSetting extends hbaction{
 		
 		$role_object = get_role( 'editor' );
 		$role_object->add_cap( 'edit_theme_options' );
-		wp_redirect(admin_url("admin.php?page=hb_setting&layout=role"));
+		wp_redirect(admin_url("admin.php?page=setting&layout=role"));
+		return;
+	}
+	
+	function saveMail(){
+		$data = $this->input->get('data');
+// 		debug($_POST);
+// 		debug($data);die;
+		foreach($data as $key=>$d){
+			$d['description'] = $_POST['data'][$key]['description'];
+			update_option($key, json_encode($d));
+		}
+		
+		wp_redirect(admin_url("admin.php?page=setting&layout=notify"));
 		return;
 	}
 	

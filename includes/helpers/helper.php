@@ -156,7 +156,7 @@ class HBHelper
 
 	static function sendMail($to, $subject, $body , $headers = null, $attachments = null,$from_name=null,$from_email=null,$cc=null)
 	{
-		if(!$header){
+		if(!$headers){
 			$headers = array('Content-Type: text/html; charset=UTF-8');
 			//$headers[] = 'From: Me Myself <me@example.net>';
 			//$headers[] = 'Cc: John Q Codex <jqc@wordpress.org>';

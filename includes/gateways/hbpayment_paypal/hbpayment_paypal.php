@@ -168,8 +168,10 @@ class HBPayment_Paypal
 		}
 		//------------DO direct checkout---------------------//		
 		$order_id = $getECResponse->GetExpressCheckoutDetailsResponseDetails->Custom;
-		$order = $this->order->load($order_id);
+		$this->order->load($order_id);
+		$order = $this->order;
 		if($this->formatNumber($order->total) != $this->formatNumber($getECResponse->GetExpressCheckoutDetailsResponseDetails->PaymentDetails[0]->OrderTotal->value)){
+		
 			echo 'Order total is invalied';
 			die();
 		}

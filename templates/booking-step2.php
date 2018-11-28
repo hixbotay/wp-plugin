@@ -27,7 +27,7 @@ $params = array(
 );
 $price = FvnPriceHelper::caculate($params);
 
-HBHtml::add_datepicker_lib();
+FvnHtml::add_datepicker_lib();
 add_filter('pre_get_document_title',function(){return __('Booking step 2');});
 ?>
 <?php get_header();?>
@@ -69,7 +69,7 @@ add_filter('pre_get_document_title',function(){return __('Booking step 2');});
 								<div class="col-md-3">
 									<label class="form-label">Birth date<span class="required">*</span></label>
 									<div class="row row-sm">
-										<?php echo HBHtml::calendar(HBFactory::getDate('-18 Years')->format(HBDateHelper::getConvertDateFormat()),'person['.$i.'][birthday]', "birthday_{$i}",HBDateHelper::getConvertDateFormat('J'),' required class="form-control"',array('changeMonth'=> 1,'changeYear'=> true,'maxDate'=>'+0'))?>
+										<?php echo FvnHtml::calendar(HBFactory::getDate('-18 Years')->format(HBDateHelper::getConvertDateFormat()),'person['.$i.'][birthday]', "birthday_{$i}",HBDateHelper::getConvertDateFormat('J'),' required readonly="true" class="form-control"',array('changeMonth'=> 1,'changeYear'=> true,'maxDate'=>'+0','yearRange'=>'c-50:c+30'))?>
 									</div>
 								</div>
 								<div class="col-sm-2">
@@ -156,7 +156,7 @@ add_filter('pre_get_document_title',function(){return __('Booking step 2');});
 										</select>
 									</div>
 									<div class="col-xs-8 col-sm-8 col-md-8" style="padding-left: 0">
-										<input type="text" id="contact_fullname" name="jform[fullname]" class="form-control" value="Freelancerviet Net">
+										<input type="text" id="contact_fullname" name="jform[fullname]" class="form-control" value="">
 									</div>
 								</div>
 							</div>
@@ -166,7 +166,7 @@ add_filter('pre_get_document_title',function(){return __('Booking step 2');});
 								Email <span class="required">*</span>
 							</label>
 							<div class="col-sm-9">
-								<input type="text" id="contact_email" name="jform[email]" class="form-control" value="duongva91@gmail.com">
+								<input type="text" id="contact_email" name="jform[email]" class="form-control" value="">
 							</div>
 						</div>
 						

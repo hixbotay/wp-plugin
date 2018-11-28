@@ -39,14 +39,12 @@ class HB_Admin_Autoload{
 	
 		//$user = wp_get_current_user();
 		//debug($user);die;
-	
-		if($request_action){
-			// Check the nonce
+		$task = $input->get('task');
+		if($request_action && $task){
 			$meta_nonce = $input->get('hb_meta_nonce');
 			if ( empty( $meta_nonce ) || ! wp_verify_nonce( $input->get('hb_meta_nonce'), 'hb_action' ) ) {
 				//@TODO check nonce
 			}
-			$task = $input->get('task');
 			//Import action by request
 			HBImporter::viewaction($request_action);
 			$class = 'hbaction'.$request_action;
@@ -55,6 +53,7 @@ class HB_Admin_Autoload{
 			$action->execute($task);
 			exit;
 		}
+		return;
 	}
 	
 	

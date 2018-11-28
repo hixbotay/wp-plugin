@@ -29,6 +29,7 @@ class HBActionOrder extends HBAction{
 			'private_later'=> $this->input->get('private_later'),
 			'airport_fast_track'=> $this->input->get('airport_fast_track'),
 			'car_service'=> $this->input->getInt('car_service'),
+			'airport'=>$airport,
 			'purpose_of_visit'=> $this->input->get('purpose_of_visit'),
 		);
 		$price = FvnPriceHelper::caculate($params);
@@ -125,7 +126,7 @@ class HBActionOrder extends HBAction{
 		$data['adult'] = count($passengers);
 		$data['pay_status']="PENDING";
 		$data['order_status']="PENDING";
-		$data['order_number'] = HBHelper::random_string(5);
+		$data['order_number'] = strtoupper(HBHelper::random_string(5));
 		$data['type'] = 'VISA';
 		$data['currency'] = $config->main_currency;
 		$data['created']= current_time( 'mysql' );

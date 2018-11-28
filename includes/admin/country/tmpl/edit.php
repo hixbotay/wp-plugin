@@ -8,7 +8,6 @@ $status = array(
 		(object)array('value'=>1,'title'=>__('Allow')),
 		(object)array('value'=>0,'title'=>__('Disable'))
 );
-$this->item->params = json_decode($this->item->params);
 // debug($this->item);
 ?>
 <h3><?php echo __('Country')?></h3>
@@ -46,7 +45,7 @@ $this->item->params = json_decode($this->item->params);
 							<td><?php echo $p->name?></td>
 							<td><input name="data[params][<?php echo $p->id?>][tour]" value='<?php echo $this->item->params->$p_id->tour?>' /></td>
 							<td><input name="data[params][<?php echo $p->id?>][bus]" value='<?php echo $this->item->params->$p_id->bus?>' /></td>
-							<td><?php echo HBHtml::radio($status, 'data[params]['.$p->id.'][status]', '', 'value', 'title',$this->item->params->$p_id->status)?></td>
+							<td><?php echo FvnHtml::radio($status, 'data[params]['.$p->id.'][status]', '', 'value', 'title',$this->item->params->$p_id->status)?></td>
 						</tr>
 					<?php }?>
 					</table>

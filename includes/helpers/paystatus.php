@@ -43,9 +43,9 @@ class PayStatus {
 		 
 	}
 	
-	static function getHtmlList($name,$attribute,$select,$id=null) {
+	static function getHtmlList($name,$attribute,$select,$id=null,$blank_text='') {
 		self::init();
-		return HBHtml::select(self::$map,$name, $attribute ,'value', 'text', $select,$id);
+		return FvnHtml::select(self::$map,$name, $attribute ,'value', 'text', $select,$id,$blank_text);
 	}
 
 	public static function get($element) {

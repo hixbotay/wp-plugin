@@ -2,7 +2,7 @@
 
 
 
-class HBParams
+class FvnParams
 {
 	static function get_customer_group(){
 		$config = AFactory::getConfig();
@@ -29,6 +29,12 @@ class HBParams
 				'video'=>'video',
 				'website'=>'website',
 		);
+	}
+	
+	static function get_car_seat(){
+		return [4=>'4 seats',
+				7=>'7 seats',
+				16=>'16 seats',24=>'24 seats'];
 	}
 	
 	

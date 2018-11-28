@@ -1,9 +1,9 @@
 <?php 
 	$passenger_numer = count($displayData->passengers);
-	//debug($displayData->order);
+// 	debug($displayData->order);
 	?>
 
-<table width="100%" class="table-summary">
+<table width="100%" class="table-summary" border="1" cellpadding="5">
 	<tbody>
 		<tr>
 			<th>Type of service</th>

@@ -1,7 +1,7 @@
 <?php 
 HBImporter::model('period','country','airport','processing_time');
-HBImporter::helper('math','date','currency');
-HBHtml::add_datepicker_lib();
+HBImporter::helper('math','date','currency','params');
+FvnHtml::add_datepicker_lib();
 $config = HBFactory::getConfig();
 $countries = (new HBModelCountry())->getList();
 $periods = (new HBModelPeriod())->getList();
@@ -33,7 +33,7 @@ get_header();
 								<label class="control-label">Passport holder <span class="required">*</span></label>
 							</div>
 							<div class="col-md-8">
-								<?php echo HBHtml::select($countries, 'country_code', 'class="form-control change-price group_size" required', 'country_code', 'country_name','','country_code',__('Please select'))?>
+								<?php echo FvnHtml::select($countries, 'country_code', 'class="form-control change-price group_size" required', 'country_code', 'country_name','','country_code',__('Please select'))?>
 							
 							</div>
 						</div>
@@ -54,7 +54,7 @@ get_header();
 								<label class="control-label"><?php echo __('Type of visa')?> <span class="required">*</span></label>
 							</div>
 							<div class="col-md-8">
-								<?php echo HBHtml::select($periods, 'period_id', 'required class="form-control change-price visa_type"', 'id', 'name',reset($periods)->id,'period_id')?>								
+								<?php echo FvnHtml::select($periods, 'period_id', 'required class="form-control change-price visa_type"', 'id', 'name',reset($periods)->id,'period_id')?>								
 							</div>
 						</div>
 						<div class="form-group row">
@@ -73,7 +73,7 @@ get_header();
 								<label class="control-label">Arrival airport <span class="required">*</span></label>
 							</div>
 							<div class="col-md-8">
-								<?php echo HBHtml::select($airports, 'airport_id', 'required class="form-control change-price arrival_port"', 'id', 'name','','airport_id',__('Please select'))?>
+								<?php echo FvnHtml::select($airports, 'airport_id', 'required class="form-control change-price arrival_port"', 'id', 'name','','airport_id',__('Please select'))?>
 								
 								<div class="processing-note">
 									<?php echo __('The first port you arrive to Vietnam')?>.
@@ -86,7 +86,7 @@ get_header();
 							</div>
 							<div class="col-md-8">
 								<div class="">
-									<?php echo HBHtml::calendar('','start', 'start', HBDateHelper::getConvertDateFormat('J'),'required class="form-control" readonly="true"',array('minDate'=>'+1'));?>
+									<?php echo FvnHtml::calendar('','start', 'start', HBDateHelper::getConvertDateFormat('J'),'required class="form-control" readonly="true"',array('minDate'=>'+1'));?>
 								</div>
 								<div class="processing-note">
 									When you arrive Vietnam?
@@ -191,12 +191,8 @@ get_header();
 									</div>
 									<label class="control-label">Seats</label>
 									<div class="">
-										<select class="form-control change-price car_service" id="car_service">
-											<option value="4" selected="selected">4 seats</option>
-											<option value="7">7 seats</option>
-											<option value="16">16 seats</option>
-											<option value="24">24 seats</option>
-										</select>
+										
+										<?php echo FvnHtml::select(FvnParams::get('car_seat','arrayObject'), '', 'class="form-control change-price car_service"', 'value', 'text',4,'car_service')?>
 										<input type="hidden" name="car_service"/>
 									</div>
 								</div>

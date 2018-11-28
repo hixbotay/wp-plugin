@@ -30,7 +30,7 @@ HBImporter::helper('params');
 			<div class="form-group row">
 				<label class="col-sm-3 col-form-label"><?php echo __('Verify passport image')?><span class="text-danger">*</span></label>
 				<div class="col-sm-9">
-					<?php echo HBHtml::booleanlist('data[verify_image]','class="form-control" ',$this->item->verify_image)?>
+					<?php echo FvnHtml::booleanlist('data[verify_image]','class="form-control" ',$this->item->verify_image)?>
 				</div>
 			</div>
 			<div class="form-group row">

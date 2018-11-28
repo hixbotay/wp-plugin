@@ -137,8 +137,11 @@ class HbModel
 		if(!empty($pk)){
 			$query = "Select * from ".$this->get_table_name()." where ".implode(' AND ', $pk);
 // 			debug($query);
-			$result =  $wpdb->get_results($query);
-			return reset($result);
+			$result =  $wpdb->get_row($query);
+			if(isset($result->params)){
+				$result->params = json_decode($result->params,true);
+			}
+			return $result;
 		}
 	
 		return false;

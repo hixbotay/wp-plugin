@@ -7,14 +7,7 @@
  		<field name="extra_service_notice" type="note" label="Extra service"/>
 		<field name="private_later" type="number" label="Private later price" default="0"/>
 		<field name="airport_fast_track" type="number" label="Airport fast track price" default="0"/>
-		<field name="car_pick_up_4" type="number" label="Car pick up 4 seats" default="0"/>
-		<field name="car_pick_up_7" type="number" label="Car pick up 7 seats" default="0"/>
-		<field name="car_pick_up_16" type="number" label="Car pick up 16 seats" default="0"/>
-		<field name="car_pick_up_24" type="number" label="Car pick up 24 seats" default="0"/>		
-		<field type="radio" name="passport_image_verify" default="0" label="Passport image verify" description="Force upload image when book with urgent" class="btn-group">
-				<option value="0">OFF</option>
-				<option value="1">ON</option>
-		</field>
+		
 		<field type="radio" name="formatHours" default="12" label="Time format" class="btn-group">
 				<option value="12">12</option>
 				<option value="24">24</option>
@@ -24,8 +17,7 @@
 			<option value="Y-m-d">Y-m-d</option>
 			<option value="d-m-Y">d-m-Y</option>
 			<option value="m-d-Y">m-d-Y</option>
-		</field>		
-		<field name="vat" type="text" default="10" label="Vat (%)"/>			
+		</field>				
 	</fieldset>
 	
 	<fieldset name="Display" label="Display">

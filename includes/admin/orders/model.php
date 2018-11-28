@@ -20,8 +20,17 @@ class HBModelOrders extends HbModel{
 			$query->where('(CONCAT(firstname," ",lastname) LIKE '.$query->quote($search).' OR order_number LIKE '.$query->quote($search).' OR mobile LIKE '.$query->quote($search).' 
 					OR email LIKE '.$query->quote($search).')');
 		}
-		if($this->getState('start')){
-			$query->where('start = '.$this->quote($this->getState('start')));
+		if($this->getState('filter_date')){
+			$query->where('start = '.$this->quote($this->getState('filter_date')));
+		}
+		if($this->getState('filter_order_status')){
+			$query->where('order_status = '.$this->quote($this->getState('filter_order_status')));
+		}
+		if($this->getState('filter_pay_status')){
+			$query->where('pay_status = '.$this->quote($this->getState('filter_pay_status')));
+		}
+		if($this->getState('filter_private_later')!=''&&$this->getState('filter_private_later')!=null){
+			$query->where('private_later = '.(int)$this->getState('private_later'));
 		}
 		$query->order('id DESC');
 		return $query;		
@@ -40,7 +49,6 @@ class HBModelOrders extends HbModel{
 			$result->period = (new HBModelPeriod())->getItem($result->order->period_id);		
 			$result->airport = (new HBModelAirport())->getItem($result->order->airport_id);				
 			$result->processing_time = (new HBModelProcessing_time())->getItem($result->order->processing_time);
-			$result->order->params = json_decode($result->order->params,true);
 			$result->order->price = $result->order->params['price'];
 			$result->passengers = $wpdb->get_results('select * from '.$wpdb->prefix.'fvn_passengers where order_id='.$order->id);
 			return $result;

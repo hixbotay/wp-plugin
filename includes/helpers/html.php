@@ -13,7 +13,7 @@
  **/
 defined('ABSPATH') or die('Restricted access');
 
-class HBHtml
+class FvnHtml
 {
 	/**
 	 * Return a select options html
@@ -60,6 +60,11 @@ class HBHtml
 	static function text($name, $attr, $selected = null, $id=null){
 		$ids = $id ? 'id="'.$id.'"' : '';
 		$html = '<input type="text" name="'.$name.'" '.$attr.' '.$ids.' value="'.$selected.'"/>';
+		return $html;
+	}
+	static function mail($name, $attr, $selected = null, $id=null){
+		$ids = $id ? 'id="'.$id.'"' : '';
+		$html = '<input type="mail" name="'.$name.'" '.$attr.' '.$ids.' value="'.$selected.'"/>';
 		return $html;
 	}
 	//create a text area box
@@ -215,28 +220,68 @@ class HBHtml
 		return $html;
 	}
 	
-	static function media_select($name,$id,$selected='') {
+	static function media_select($name,$id,$selected='',$multi=false) {
+// 		debug($selected);
 		// Save attachment ID
 		wp_enqueue_media();
 		$src = '';
-		if($selected){
-			$src = reset(wp_get_attachment_image_src($selected,'thumbnail',true));
-		}
+		$image ='';//for multi select
 		?>	
-			<div class='image-preview-wrapper'>
-				<img id='image-preview' src='<?php echo $src?>' width='100' height='100' style='max-height: 100px; width: 100px;'>
-			</div>
-			<input id="upload_image_button" type="button" class="button" value="<?php _e( 'Upload image' ); ?>" />
-			<input type='hidden' name='<?php echo $name?>' id='<?php echo $id?>' value='<?php echo $selected?>'>
-		
+			
+			
+			<?php if($multi){
+				foreach ($selected as $i=>$s){
+					$src = wp_get_attachment_image_src($s,'thumbnail',true)[0];
+				?>
+					<div class="upload-image-section mb-1">
+						<input type="button" class="button upload_image_button" value="<?php _e( 'Upload image' ); ?>" />
+						<div class='image-preview-wrapper'>
+							<img class='image-preview' src='<?php echo $src?>' style='max-height: 100px; width: 100px;'>
+						</div>
+						<input type='hidden' class="upload-image-value" name='<?php echo $name?>[]' value='<?php echo $s?>'>
+						<a href="javascript:void(0)" onclick="jQuery(this).parent().remove()"><?php echo __('Delete')?></a>
+					</div>
+				<?php }
+				}else{?>
+					<div class="upload-image-section">
+						<input id="upload_image_button" type="button" class="button" value="<?php _e( 'Upload image' ); ?>" />
+						<div class='image-preview-wrapper'>
+							<img class='image-preview' src='<?php echo $src?>' style='max-height: 100px; width: 100px;'>
+						</div>
+						<input type='hidden' class="upload-image-value" name='<?php echo $name?>' value='<?php echo $selected?>'>
+					</div>
+				<?php }?>
+				
+			
+		<div id="new-image-section"></div>
+		<?php if($multi){?>
+		<button id="add-new-image" type="button" class="btn-primary btn add-new-image"><?php echo __('Add new image')?></button>
+		<?php }?>
 		<script type='text/javascript'>
 		jQuery( document ).ready( function( $ ) {
+			$('.add-new-image').click(function(){
+				var html = '<div class="upload-image-section mb-1">'+
+						'<input type="button" class="button upload_image_button" value="<?php _e( 'Upload image' ); ?>" />'+
+						'<div class="image-preview-wrapper">'+
+							'<img class="image-preview" src="" style="max-height: 100px; width: 100px;">'+
+						'</div>'+
+						'<input type="hidden" class="upload-image-value" name="<?php echo $name?>[]" />'+
+						'<a href="javascript:void(0)" onclick="jQuery(this).parent().remove()"><?php echo __('Delete')?></a>'+
+					'</div>';				
+				$('#new-image-section').append(html);
+				
+			});
 			// Uploading files
-			var file_frame;
+			
 			var wp_media_post_id = wp.media.model.settings.post.id; // Store the old id
-			var set_to_post_id = '<?php echo $selected; ?>'; // Set this
-			jQuery('#upload_image_button').on('click', function( event ){
+			
+			
+			jQuery('.upload_image_button').live('click', function( event ){
+				var file_frame;
 				event.preventDefault();
+				var parent = $(this).parents('.upload-image-section');
+				
+				var set_to_post_id = parent.find('.upload-image-value').val();
 				// If the media frame already exists, reopen it.
 				if ( file_frame ) {
 					// Set the post ID to what we want
@@ -261,21 +306,29 @@ class HBHtml
 					// We set multiple to false so only get one image from the uploader
 					attachment = file_frame.state().get('selection').first().toJSON();
 					// Do something with attachment.id and/or attachment.url here
-					$( '#image-preview' ).attr( 'src', attachment.url ).css( 'width', 'auto' );
-					$( '#<?php echo $id?>' ).val( attachment.id );
+					parent.find('.image-preview').attr( 'src', attachment.url ).css( 'width', 'auto' );
+					parent.find('.upload-image-value').val( attachment.id );
+					parent=null;
 					// Restore the main post ID
-					wp.media.model.settings.post.id = wp_media_post_id;
+					wp.media.model.settings.post.id = attachment.id;
 				});
 					// Finally, open the modal
 					file_frame.open();
+					//parent=null;
 			});
 			// Restore the main ID when the add media button is pressed
 			jQuery( 'a.add_media' ).on( 'click', function() {
+				console.log(wp_media_post_id);
 				wp.media.model.settings.post.id = wp_media_post_id;
 			});
 		});
 	</script>
 		<?php
+	}
+	
+	static function editor($name,array $attr,$value,$id){		
+		$attr['textarea_name'] = $name;
+		return wp_editor( $value, $id, $attr );
 	}
 		
 	

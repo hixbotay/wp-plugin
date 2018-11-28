@@ -121,16 +121,10 @@ class HBActionPayment extends HBAction{
 	
 	private function sendMail($order_id){	
 		HBImporter::model('orders');
-		HBImporter::helper('currency');
-		$model = new HBModelOrders();
-		$new_order =$model->getComplexItem($order_id);
-		$html = HBHelper::renderLayout('client-order-confirm', $new_order,'emails');
-// 		echo $html;die;
-        HBHelper::sendMail($new_order->email,"Confirm Visa booking", $html);
-        
-        $html = HBHelper::renderLayout('admin-order-notice', $new_order,'emails');
-//         debug(HBFactory::getConfig());die;
-        HBHelper::sendMail(HBFactory::getConfig()->company_email, 'New Booking', $html);
+		HBImporter::helper('currency','email');
+		$mail = new FvnMailHelper($order_id);
+		$mail->sendCustomer();
+        $mail->sendAdmin();
         
 	}
 	

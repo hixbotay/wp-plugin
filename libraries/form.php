@@ -499,10 +499,10 @@ class HBForm{
 		$attr = $this->filterAttribute($field_clone);
 		switch ($field_clone['type']){
 			case "text":
-				$html .= HBHtml::text($field_clone['name'], $attr, $selected, $field_clone['id']);
+				$html .= FvnHtml::text($field_clone['name'], $attr, $selected, $field_clone['id']);
 				break;
 			case "number":
-				$html .= HBHtml::number($field_clone['name'], $attr, $selected, $field_clone['id']);
+				$html .= FvnHtml::number($field_clone['name'], $attr, $selected, $field_clone['id']);
 				break;
 			case "list":				
 				$options = $this->xml->xpath('//field[@name="' . $field_clone['name'] . '"]//option');
@@ -510,7 +510,7 @@ class HBForm{
 				foreach ($options as $option){
 					$list[] = (object)array('value'=>(string)$option['value'],'text'=>(string)$option[0]);
 				}
-				$html .= HBHtml::select($list, $field_clone['name'], $attr, 'value', 'text',$selected);				
+				$html .= FvnHtml::select($list, $field_clone['name'], $attr, 'value', 'text',$selected);				
 				
 				break;
 			case "radio":
@@ -519,7 +519,7 @@ class HBForm{
 				foreach ($options as $option){
 					$list[] = (object)array('value'=>(string)$option['value'],'text'=>(string)$option[0]);
 				}
-				$html .= HBHtml::radio($list, $field_clone['name'], $attr, 'value', 'text',$selected);
+				$html .= FvnHtml::radio($list, $field_clone['name'], $attr, 'value', 'text',$selected);
 			
 				break;
 			case "textarea":
@@ -536,7 +536,7 @@ class HBForm{
 				foreach ($roles as $key=>$role){
 					$list[] = (object)array('value'=>$key,'text'=>$key);
 				}				
-				$html .= HBHtml::checkBoxList($list, $field_clone['name'].'[]', $attr,'value', 'text',$selected);		
+				$html .= FvnHtml::checkBoxList($list, $field_clone['name'].'[]', $attr,'value', 'text',$selected);		
 				break;
 			case "page":
 				$args = array(
@@ -547,7 +547,7 @@ class HBForm{
 				);
 				$pages = get_pages($args);
 // 				debug($pages);
-				$html .= HBHtml::select($pages, $field_clone['name'], $attr, 'ID', 'post_title',$selected);
+				$html .= FvnHtml::select($pages, $field_clone['name'], $attr, 'ID', 'post_title',$selected);
 				break;
 			
 			default:
@@ -556,7 +556,7 @@ class HBForm{
 				if(is_string($field_str)){
 					$html .= $field_str;
 				}else{
-					$html .= HBHtml::text($field_clone['name'], $attr, $selected, $field_clone['id']);
+					$html .= FvnHtml::text($field_clone['name'], $attr, $selected, $field_clone['id']);
 				}
 				break;
 				

@@ -2,7 +2,7 @@
 	
 HBImporter::model('period','country','airport','processing_time','orders');
 HBImporter::helper('math','date','currency','orderstatus','paystatus');
-HBHtml::add_datepicker_lib();
+FvnHtml::add_datepicker_lib();
 $config = HBFactory::getConfig();
 $countries = (new HBModelCountry())->getList();
 $periods = (new HBModelPeriod())->getList();
@@ -10,7 +10,6 @@ $airports = (new HBModelAirport())->getList();
 $processing_times = (new HBModelProcessing_time())->getList();
 
 $order_complex = (new HBModelOrders())->getComplexItem($this->item->id);
-$this->item->params = json_decode($this->item->params,true);
 // debug($this->item->params);die;
 ?>
 
@@ -46,7 +45,7 @@ $this->item->params = json_decode($this->item->params,true);
 			</div>
 			<div class="row form-group">
                 <div class="col-md-5">Passport holder</div>
-				<div class="col-md-7"><?php echo HBHtml::select($countries, 'data[country_code]', 'class="form-control change-price group_size"', 'country_code', 'country_name',$this->item->country_code,'country_code')?></div>
+				<div class="col-md-7"><?php echo FvnHtml::select($countries, 'data[country_code]', 'class="form-control change-price group_size"', 'country_code', 'country_name',$this->item->country_code,'country_code')?></div>
 			</div>
 			<div class="row form-group">
                 <div class="col-md-5">Number of visa</div>
@@ -54,11 +53,11 @@ $this->item->params = json_decode($this->item->params,true);
 			</div>
 			<div class="row form-group">
                 <div class="col-md-5"><?php echo __('Type of visa')?> </div>
-				<div class="col-md-7"><?php echo HBHtml::select($periods, 'data[period_id]', 'class="form-control change-price visa_type"', 'id', 'name',$this->item->period_id,'period_id')?></div>
+				<div class="col-md-7"><?php echo FvnHtml::select($periods, 'data[period_id]', 'class="form-control change-price visa_type"', 'id', 'name',$this->item->period_id,'period_id')?></div>
 			</div>
 			<div class="row form-group">
                 <div class="col-md-5"><?php echo __('Processing time')?> </div>
-				<div class="col-md-7"><?php echo HBHtml::select($processing_times, 'data[processing_time]', 'class="form-control change-price visa_type"', 'id', 'name',$this->item->processing_time,'processing_time')?></div>
+				<div class="col-md-7"><?php echo FvnHtml::select($processing_times, 'data[processing_time]', 'class="form-control change-price visa_type"', 'id', 'name',$this->item->processing_time,'processing_time')?></div>
 			</div>
 			<div class="row form-group">
                 <div class="col-md-5">Purpose of visit</div>
@@ -69,7 +68,7 @@ $this->item->params = json_decode($this->item->params,true);
 			</div>
 			<div class="row form-group">
                 <div class="col-md-5">Airport</div>
-				<div class="col-md-7"><?php echo HBHtml::select($airports, 'data[airport_id]', 'class="form-control change-price arrival_port"', 'id', 'name',$this->item->airport_id,'airport_id')?></div>
+				<div class="col-md-7"><?php echo FvnHtml::select($airports, 'data[airport_id]', 'class="form-control change-price arrival_port"', 'id', 'name',$this->item->airport_id,'airport_id')?></div>
 			</div>
 			<div class="row form-group">
 				<div class="col-md-5"><?php echo __('Arrival date')?></div>
@@ -89,7 +88,7 @@ $this->item->params = json_decode($this->item->params,true);
 				</div>
 				<div class="row form-group">
 					<div class="col-md-5">Birthday</div>
-					<div class="col-md-7"><?php echo HBHtml::calendar(HBDateHelper::display($p->birthday), 'passenger['.$p->id.'][birthday]','pss_'.$p->id, HBDateHelper::getConvertDateFormat('J'))?></div>
+					<div class="col-md-7"><?php echo FvnHtml::calendar(HBDateHelper::display($p->birthday), 'passenger['.$p->id.'][birthday]','pss_'.$p->id, HBDateHelper::getConvertDateFormat('J'))?></div>
 				</div>
 				<div class="row form-group">
 					<div class="col-md-5">Passport</div>
@@ -130,7 +129,7 @@ $this->item->params = json_decode($this->item->params,true);
 		<h3><?php echo __('Extra service')?></h3>
 		<div class="row form-group">
 			<div class="col-md-5"><?php echo __('Private visa later')?></div>
-			<div class="col-md-7"><?php echo HBHtml::booleanlist('data[private_later]','',$this->item->private_later)?></div>
+			<div class="col-md-7"><?php echo FvnHtml::booleanlist('data[private_later]','',$this->item->private_later)?></div>
 		</div>
 		<div class="row form-group">
 			<div class="col-md-5"><?php echo __('AIrport fast track')?></div>
@@ -144,9 +143,21 @@ $this->item->params = json_decode($this->item->params,true);
 			<div class="col-md-5"><?php echo __('Created')?></div>
 			<div class="col-md-7"><?php echo HBDateHelper::display($this->item->created,'M d Y H:i')?></div>
 		</div>
+		<div class="row form-group">
+			<div class="col-md-5"><?php echo __('Scan visa result')?></div>
+			<div class="col-md-7"></div>
+		</div>
+		<div>
+			<?php echo FvnHtml::media_select('data[params][image_result]','image-p-result',isset($this->item->params['image_result'])?$this->item->params['image_result']:array(),true)?>
+		</div>
 	</div>
 	
 	
 </div><!-- #primary -->
 </div>
 </form>
+<style>
+.upload-image-section{
+border:1px solid #ccc;
+padding:5px;
+}</style>
