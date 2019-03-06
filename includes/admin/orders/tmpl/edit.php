@@ -106,7 +106,7 @@ $order_complex = (new HBModelOrders())->getComplexItem($this->item->id);
 
 
 		<?php wp_nonce_field( 'hb_action', 'hb_meta_nonce' );?>
-		<center><button type="submit" class="btn btn-primary btn-lg">Lưu</button></center>
+		<center><button type="submit" class="btn btn-primary btn-lg"><?php echo __('Save')?></button></center>
 	
 	</div>
 	<div class="col-md-4">

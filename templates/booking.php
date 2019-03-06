@@ -106,7 +106,7 @@ get_header();
 									</label>
 									<div id="processing-time-normal-note" class="processing-option none">
 										<div class="processing-note">
-											<?php echo $pt->description?>
+											<?php echo $pt->description ?>
 										</div>
 									</div>
 								</div>
@@ -237,9 +237,9 @@ get_header();
 								<label>Visa service fee:</label>
 								<span class="total_visa_price price"><?php echo HBCurrencyHelper::displayPrice(reset($periods)->price_tour)?> x 1 applicant = <?php echo HBCurrencyHelper::displayPrice(reset($periods)->price_tour)?></span>
 							</li>
-							<li class="clearfix" id="processing_time_li" style="display: none">
+							<li class="clearfix" id="processing_time_li" style="display: block">
 								<label>Processing time:</label>
-								<span class="processing_note_t">Normal (2 working days)</span>
+								<span class="processing_note_t"><?php echo (reset($processing_time)->name) ?></span>
 								<div class="clr"></div>
 								<span class="processing_t price"></span>
 								<div class="clr"></div>
@@ -260,7 +260,7 @@ get_header();
 								<label>VIP discount:</label>
 								<span class="vipsave_t price"></span>
 							</li>
-							<li class="clearfix" id="promotion_li" style="background-color: #F8F8F8">
+							<!-- <li class="clearfix" id="promotion_li" style="background-color: #F8F8F8">
 								<div class="" id="promotion-box-input">
 									<div class="row clearfix">
 										<label class="col-md-5">Got a promotion code?</label>
@@ -271,7 +271,7 @@ get_header();
 													<button type="button" class="btn btn-danger btn-apply-code">APPLY</button>
 												</span>
 										    </div>
-											<!-- <div class="promotion-error red none">Code invalid. Please try again!</div> -->
+											<div class="promotion-error red none">Code invalid. Please try again!</div>
 										</div>
 									</div>
 								</div>
@@ -279,11 +279,13 @@ get_header();
 									<label class="left">Promotion discount:</label>
 									<span class="promotion_t price"></span>
 								</div>
-							</li>
+							</li> -->
 							<li class="total clearfix">
 								<div class="clearfix">
 									<label>TOTAL FEE:</label>
 									<span class="total_price"><?php echo HBCurrencyHelper::displayPrice(reset($periods)->price_tour)?></span>
+									<p>(Stamping fee is excluding, you will pay in cash at the airport)</p>
+									
 								</div>
 								
 							</li>
@@ -356,7 +358,7 @@ get_header();
 	           url: 'index.php?hbaction=order&task=caculate_price',
 	           dataType: 'json',
 	           data: post, // serializes the form's elements.
-	           beforeSend: function(){display_processing_form(1);},
+	           beforeSend: function(){display_processing_form();},
 	           success: function(result)
 	           {       	 
 	        	   display_processing_form(0);
@@ -366,6 +368,7 @@ get_header();
 	        	   $('.visit_purpose_t').html(result.purpose_of_visit);
 	        	   $('.arrival_port_t').html(result.airport_id);	        	   
 	        	   $('.total_visa_price').html(result.visa_service_fee);
+				   $('.processing_note_t').html(result.processing_time);
 	        	   if(result.private_later!=''){
 		        	   $('#private_visa_li').show();
 	        		   $('.private_visa_t').html(result.private_later);
@@ -390,7 +393,7 @@ get_header();
 	        	   $('.total_price').html(result.total);
 	           },
 	           error: function (){
-	        	   display_processing_form(0);
+	        	   display_processing_form();
 	        	   jAlert('<?php echo __('System error'); ?>');
 		       }
 	         });

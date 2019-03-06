@@ -110,12 +110,12 @@ add_filter('pre_get_document_title',function(){return __('Booking step 2');});
 						<p>Please fill out the flight information that we can pick you up on time at the airport.</p>
 						<p>
 							</p><div class="radio">
-								<label for="flight_notbooked"><input type="radio" id="flight_notbooked" name="jform[flight]" class="flight_booking" value="0"> I have not booked yet</label>
+								<label for="flight_notbooked"><input type="radio" id="flight_notbooked" name="jform[flight]" class="flight_booking" value="0" checked="checked"> I have not booked yet</label>
 							</div>
 						<p></p>
 						<p>
 							</p><div class="radio">
-								<label for="flight_booked"><input type="radio" id="flight_booked" name="jform[flight]" class="flight_booking" value="1" checked="checked"> I have booked (Recommended)</label>
+								<label for="flight_booked"><input type="radio" id="flight_booked" name="jform[flight]" class="flight_booking" value="1" <?php echo $input->get('airport_fast_track')|| $input->get('car_pickup') ? 'checked="checked"' : '' ?> > I have booked (Recommended)</label>
 							</div>
 						<p></p>
 						<div class="flight_table" name="flight_table" id="flight_table" style="display:block">

@@ -186,12 +186,12 @@ public static function formatpricewithVat($value,$vat = ''){
 
     public static function paymentStatus($method, $pay_status){
         if ($method === 'offline'){
-            return "Thanh toán tiền mặt";
+            return "Payment in cash";
         }
         if ($pay_status === 'PENDING'){
-            return "Chưa thanh toán";
+            return "Unpaid";
         }else{
-            return "Đã thanh toán";
+            return "Paid";
         }
     }
 

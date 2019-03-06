@@ -168,7 +168,7 @@ class HBHelper
 			$headers[] = "From: {$from_name} <{$from_email}>";
 		}
 		
-		return wp_mail( $to, $subject, $body, $headers, $attachments );
+		return wp_mail(explode(';',$to), $subject, $body, $headers, $attachments );
 	}
 	
 	static function getPassengerForm($adult,$children,$infant){

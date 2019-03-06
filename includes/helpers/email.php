@@ -11,8 +11,8 @@ class FvnMailHelper{
 		$this->order_complex = $model->getComplexItem($order_id);		
 		$config = HBFactory::getConfig();
 // 		debug($config);
-		$this->from_name = $config->get('company_name','Freelancerviet.net');
-		$this->from_email = $config->get('company_email','vuonganhduong812@gmail.com');
+		$this->from_name = $config->get('company_name','DiemTuaViet.net');
+		$this->from_email = $config->get('company_email','info.decci@gmail.com');
 	}
 	
 	static function getOrderKey(){
@@ -28,6 +28,21 @@ class FvnMailHelper{
 				$template->from_name? $template->from_name:$this->from_name,
 				$template->from_email?$template->from_email:$this->from_email);
 	}
+	
+	function sendPayment(){
+		$c_mail = get_option('fvn_mail_customer');
+		$c_mail = json_decode($c_mail);
+		
+		$template = get_option('fvn_mail_payment');
+		$template = json_decode($template);
+		$template->description = $this->fillOrder($template->description);
+		// 		echo $template->description;die;
+		return HBHelper::sendMail($this->order_complex->order->email,$template->title, $template->description,
+				'','',
+				$c_mail->from_name? $c_mail->from_name:$this->from_name,
+				$c_mail->from_email?$c_mail->from_email:$this->from_email);
+	}
+
 	function sendAdmin(){
 		$template = get_option('fvn_mail_admin');
 		$template = json_decode($template);

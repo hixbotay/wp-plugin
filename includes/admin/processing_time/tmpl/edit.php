@@ -38,18 +38,13 @@ HBImporter::helper('params');
 				<div class="col-sm-9">
 					<?php wp_editor( $this->item->description, 'data_description', array('textarea_name'=>'data[description]') );?>
 				</div>
-			</div>
-			
-			
-			
+			</div>	
 			<input type="hidden" value="<?php echo $this->input->get('id')?>" name="id"/>
-			
-			
 		</div>
 		<?php wp_nonce_field( 'hb_action', 'hb_meta_nonce' );?>
 		<input type="hidden" name="task" value="save"/>
-		<center><button type="submit" class="btn btn-primary btn-lg">Lưu</button></center>
-		<center><button type="button" onclick="hb_submit_form('save_and_close')" class="btn btn-primary btn-lg">Lưu & đóng</button></center>
+		<center><button type="submit" class="btn btn-primary btn-lg"><?php echo __('Save')?></button></center>
+		<center><button type="button" onclick="hb_submit_form('save_and_close')" class="btn btn-primary btn-lg"><?php echo __('Save and close')?></button></center>
 	</form>
 	
 </div><!-- #primary -->

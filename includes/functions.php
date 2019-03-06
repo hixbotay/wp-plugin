@@ -142,3 +142,11 @@ function hb_set_post_view($postID) {// hàm này dùng để set và update số
     }
 }
 
+function add_linebreak_shortcode() {
+return '<br />';
+}
+add_shortcode('br', 'add_linebreak_shortcode' );
+function clear_br($content) { 
+return str_replace("<br/>","<br clear='none'/>", $content);
+} 
+add_filter('the_content','clear_br');

@@ -169,6 +169,13 @@ class HBActionOrder extends HBAction{
 					
 				}
 				$passenger_model->batch_save($passengers);
+				
+				//gui mail sau khi book
+				HBImporter::model('orders');
+				HBImporter::helper('currency','email');
+				$mail = new FvnMailHelper($order->id);
+				$mail->sendPayment();
+				
 				wp_redirect(site_url('payment?order_id='.$order->id));
 				exit;
 			}else{

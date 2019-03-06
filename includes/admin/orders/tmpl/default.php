@@ -11,7 +11,7 @@
 defined('ABSPATH') or die('Restricted access');
 HBImporter::helper('currency','date','orderstatus','paystatus','params');
 global $wpdb;
-$total = $this->pagination->total;
+$total = $wpdb->get_var("SELECT count(1) FROM {$wpdb->prefix}fvn_orders");
 $paid_count = $wpdb->get_var("SELECT count(1) FROM {$wpdb->prefix}fvn_orders WHERE pay_status = 'SUCCESS'");
 $unpaid_count = $total-$paid_count;
 FvnHtml::add_datepicker_lib();
@@ -36,10 +36,10 @@ if ($this->input->get('pay') == 'pending'){
     </ul>
     
     <ul class="subsubsub">
-        <li class="all"><a href="admin.php?page=orders" aria-current="page">Tất cả <span class="count">(<?php echo $total ?>)</span></a> |</li>
+        <li class="all"><a href="admin.php?page=orders" aria-current="page">All <span class="count">(<?php echo $total ?>)</span></a> |</li>
         
-        <li class="active"><a href="admin.php?page=orders&pay=success" <?php echo $paid_active ?>>Đã thanh toán <span class="count">(<?php echo $paid_count ?>)</span></a> |</li>
-        <li class="active"><a href="admin.php?page=orders&pay=pending" <?php echo $unpaid_active ?>>Chưa thanh toán <span class="count">(<?php echo $unpaid_count ?>)</span></a> |</li>
+        <li class="active"><a href="admin.php?page=orders&filter_pay_status=success" <?php echo $paid_active ?>>Paid <span class="count">(<?php echo $paid_count ?>)</span></a> |</li>
+        <li class="active"><a href="admin.php?page=orders&filter_pay_status=pending" <?php echo $unpaid_active ?>>UnPaid <span class="count">(<?php echo $unpaid_count ?>)</span></a> |</li>
         
     </ul>
 
@@ -73,9 +73,10 @@ if ($this->input->get('pay') == 'pending'){
 		<table class="wp-list-table widefat fixed striped posts">
 			<thead>
 				<tr>
-                    <th id="cb" class="column-cb check-column">
+                    <!-- <th id="cb" class="column-cb check-column">
                         <input id="cb-select-all-1" type="checkbox" onclick="toggle(this)">
                     </th>
+                     -->
 					<th><?php echo __('Order number')?></th>
 					<th><?php echo __('Full name')?></th>
 					<th><?php echo __('Arrival date')?></th>
@@ -109,9 +110,11 @@ if ($this->input->get('pay') == 'pending'){
 
                         ?>
 					<tr>
-                        <td>
+                        <!-- <td>
                             <input id="cb-select-<?php echo $item->id; ?>" type="checkbox" name="id[]" value="<?php echo $item->id; ?>"></td>
+                             -->
 						<td>
+						
 							<a target="_blank" href="<?php echo HBHelper::get_order_link($item)?>"><?php echo $item->order_number;?></a>
 							<div class="clearfix"></div>
 							<div class="row-actions">

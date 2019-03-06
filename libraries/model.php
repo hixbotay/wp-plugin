@@ -149,6 +149,7 @@ class HbModel
 	}
 	
 	function bind($data){
+		//debug($data);die;
 		foreach($data as $key=>$val){
 			$this->$key = $val;
 		}
@@ -191,7 +192,7 @@ class HbModel
 			$table_fields = array_map(function($a){return $a->Field;}, $table_fields);
 			$data = $this->getProperties();
 			foreach($table_fields as $i=>$k){
-				if(empty($data[$k])){
+				if(is_null($data[$k])){
 					unset($table_fields[$i]);
 				}
 			}

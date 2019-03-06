@@ -29,7 +29,29 @@ class HBActionOrders extends hbaction{
 		HBImporter::helper('csvfilehelper');
 		$this->load_model();
 		$items = $this->model->getItems();
-		CsvFileHelper::download($items, 'order.csv');
+		$loc=array('order_number','total','pay_status','notes','order_status','firstname','lastname','email','mobile');
+		$result=[];
+		global $wpdb;
+		$query = HBFactory::getQuery();
+		foreach($items as $i=>$item){
+			
+			
+			foreach($item as $k=>$v){				
+				if(in_array($k,$loc)){
+					$result[$i][$k]=$v;
+				}
+			}
+			$query->clear();
+			$passports = $wpdb->get_results($query->select('passport')->from('#__fvn_passengers')
+					->where('order_id='.$item->id)->__toString());
+				
+			$result[$i]['passport'] = '';
+			foreach($passports as $p){
+				$result[$i]['passport'] .= ' '.$p->passport;
+			}
+			
+		}
+		CsvFileHelper::download($result, 'order.csv');
 		exit;
 	}
 	

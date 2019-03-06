@@ -7,7 +7,6 @@
  * @license 	GNU/GPLv3 http://www.gnu.org/licenses/gpl-3.0.html
  **/
 defined('ABSPATH') or die('Restricted access');
-
 class HBActionPayment extends HBAction{
 	
 	/*
@@ -26,8 +25,7 @@ class HBActionPayment extends HBAction{
 		$order->pay_method=$payment_plugin;
 		$order->store();	
 		
-// 		debug($order);die;
-		
+// 		debug($order);die;		
 		do_action('fvn_order_process_checkout',$order);		
 		$order_id = $order->id;
 		//Trigger _preparePayment of payment gateway to generate checkout page
@@ -41,14 +39,9 @@ class HBActionPayment extends HBAction{
 		$payment->cancel_url = site_url("index.php?hbaction=payment&task=confirm&method={$payment_plugin}&paction=cancel&order_id=$order_id");
 		$payment->notify_url = site_url("index.php?hbaction=payment&task=confirm&method={$payment_plugin}&paction=process&order_id=$order_id");
 		$payment->order = $order;
-		$result = $payment->_prePayment();
-		
-		
-		return;
-			
-	}
-	
-	
+		$result = $payment->_prePayment();		
+		return;			
+	}	
 	
 	/**
 	 * Render form
@@ -73,9 +66,7 @@ class HBActionPayment extends HBAction{
 		$html = $payment->_renderForm($values);
 		echo $html;
 		exit;
-	}
-	
-	
+	}	
 
 	/**
 	 * Process payment after return from 
@@ -84,13 +75,10 @@ class HBActionPayment extends HBAction{
 	{
 		//import core plugin
 		HBImporter::corePaymentPlugin();
-		HBImporter::model('orders');
-		
-		do_action('hb_order_process_execute_before');
-		
+		HBImporter::model('orders');		
+		do_action('hb_order_process_execute_before');		
 		$plugin = $this->input->getString('method');
 		$config = HBFactory::getConfig();
-		
 		$payment = new $plugin();	
 		$payment->config = $config;
 		$payment->order = new HBModelOrders();
@@ -107,32 +95,26 @@ class HBActionPayment extends HBAction{
 					$this->sendMail($results->id);
 				}
 			}
-		}
-		
+		}		
 		do_action('hb_order_process_execute_after',$results);
 		if($results->order_status=='CONFIRMED'){
 			wp_redirect(HBHelper::get_order_link($results));
 		}else{			
 			wp_redirect('index.php?view=message');
-		}
-		
+		}		
 		exit;
-	}
-	
+	}	
 	private function sendMail($order_id){	
 		HBImporter::model('orders');
 		HBImporter::helper('currency','email');
 		$mail = new FvnMailHelper($order_id);
 		$mail->sendCustomer();
-        $mail->sendAdmin();
-        
-	}
-	
+        $mail->sendAdmin();        
+	}	
 	//send mail via post curl
 	public function urlSendmail(){
 		$order_id = $this->input->getInt('order_id');
 		$this->sendMail($order_id);
 		exit;
-	}
-	
+	}	
 }
